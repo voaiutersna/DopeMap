@@ -1,66 +1,63 @@
+# #fastapi dev main.py
+
 # from fastapi import FastAPI, Depends
 # from typing import Union
 # from pydantic import BaseModel
-
-# from sqlalchemy import create_engine, text , Column, Integer, String, Float
+# from sqlalchemy import create_engine, text, Column, Integer, String, Float
 # from sqlalchemy.orm import sessionmaker, Session, declarative_base
 # from sqlalchemy.ext.declarative import declarative_base
 
-
 # # Step1 : Create a SQLAlchemy engine
-# # ใช้ psycopg v3
-# #กำหนดการเชื่อมต่อ
-# # DATABASE_URL = "postgresql+psycopg://postgres:sosgasdf1234@localhost:5432/postgres"
-# DATABASE_URL = 'postgresql://neondb_owner:npg_3heOIs0NPLum@ep-super-smoke-a1v9ddnw-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-# # database connection  
+# DATABASE_URL = 'postgresql://neondb_owner:npg_3heOIs0NPLum@ep-super-smoke-a1v9ddnw-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require'
+
+# # สร้าง engine สำหรับ NeonDB
 # engine = create_engine(
 #     DATABASE_URL,
 #     connect_args={
 #         "sslmode": "require",
-#         "prepared_statement_cache_size": 0,   # สำคัญกับ PgBouncer
 #     },
-#     pool_pre_ping=True,  # ช่วยรีเช็คคอนเนกชันก่อนใช้
+#     pool_pre_ping=True,
+#     pool_size=5,  # จำกัดจำนวน connection
+#     max_overflow=10,
+#     echo=False  # เปิดเป็น True ถ้าอยากเห็น SQL queries
 # )
 
-# #สร้าง Session = ช่องทางการคุยกับ DB (เริ่ม transaction, query, insert, commit)
+# # สร้าง Session
 # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# #สร้าง Base สำหรับ ORM : Base class เป็น class หลักที่ใช้เป็น instance สำหรับการสร้าง class ที่แทนตารางใน database
-# Base = declarative_base() #กำหนด schema base model
+
+# # สร้าง Base สำหรับ ORM
+# Base = declarative_base()
 
 # # Step2 : ORM class
-# # สร้างโมเดลสำหรับฐานข้อมูล
 # class Item(Base):
-#     __tablename__ = "items"
+#     __tablename__ = "items"  # แก้ไขตรงนี้! ต้องเป็น __tablename__
+    
 #     id = Column(Integer, primary_key=True, index=True)
 #     name = Column(String, index=True)
 #     email = Column(String, index=True)
 #     password = Column(String, index=True)
 
-# # สร้างฐานข้อมูล
+# # สร้างตารางในฐานข้อมูล
 # Base.metadata.create_all(bind=engine)
-
 
 # app = FastAPI()
 
 # # Step3 : Pydantic model
-# # 1 - Base
 # class ItemBased(BaseModel):
 #     name: str
 #     email: str
 #     password: str
 
-
-# # 2 - request
 # class ItemCreated(ItemBased):
 #     pass
 
-# # 3 - response
 # class ItemResponse(ItemBased):
-#     id : int
-#     class Config: #response tool
+#     id: int
+    
+#     class Config:
 #         from_attributes = True
 
-# #dependency ปิด db
+# # Dependency function
 # def get_db():
 #     db = SessionLocal()
 #     try:
@@ -68,99 +65,116 @@
 #     finally:
 #         db.close()
 
-# # Step4 : CRUD
-
-# @app.post("/submit", response_model = ItemResponse)
-# def submit_data(item: ItemCreated, db:Session = Depends(get_db)):
+# # Step4 : CRUD Endpoints
+# @app.post("/submit", response_model=ItemResponse)
+# def submit_data(item: ItemCreated, db: Session = Depends(get_db)):
 #     db_item = Item(**item.model_dump())
 #     db.add(db_item)
 #     db.commit()
 #     db.refresh(db_item)
 #     return db_item
 
-# # check connecting database
+# @app.get("/items")
+# def get_all_items(db: Session = Depends(get_db)):
+#     items = db.query(Item).all()
+#     return {"items": items}
+
+# @app.get("/items/{item_id}")
+# def get_item(item_id: int, db: Session = Depends(get_db)):
+#     item = db.query(Item).filter(Item.id == item_id).first()
+#     if not item:
+#         return {"error": "Item not found"}
+#     return item
+
+# # ตรวจสอบการเชื่อมต่อ
 # @app.get("/ping-db")
 # def ping_db(db: Session = Depends(get_db)):
 #     try:
-#         db.execute(text("SELECT 1"))
-#         return {"status": "ok", "message": "✅ Database connected"}
+#         result = db.execute(text("SELECT 1"))
+#         return {"status": "ok", "message": "✅ Database connected successfully"}
 #     except Exception as e:
-#         return {"status": "error", "message": str(e)}
+#         return {"status": "error", "message": f"❌ Connection failed: {str(e)}"}
 
 # @app.get("/")
 # def read_root():
-#     return {"Hello": "World3"}
-
-# # @app.get("/items/{item_id}")
-# # def read_item(item_id: int, q: Union[str, None] = None):
-# #     return {"item_id": item_id, "q": q}
-
-# # @app.put("/items/{item_id}")
-# # def update_item(item_id: int, item: Item):
-# #     return {"item_id": item_id, "item_name": item.name, "item_description": item.desc}
-
-# # @app.delete("/items/{item_id}")
-# # def delete_item(item_id: int, item: Item):
-# #     return {"item_id": item_id, "item_name": item.name, "item_description": item.desc}
-
-# #fastapi dev main.py
-
-from fastapi import FastAPI, Depends
-from typing import Union
-from pydantic import BaseModel
-from sqlalchemy import create_engine, text, Column, Integer, String, Float
+#     return {"Hello": "World", "status": "FastAPI + NeonDB is running!"}
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from typing import Union, Optional
+from pydantic import BaseModel, EmailStr
+from sqlalchemy import create_engine, text, Column, Integer, String, Float, DateTime
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime, timedelta
+import bcrypt
+from jose import jwt, JWTError
+
+# JWT Configuration
+SECRET_KEY = "your-secret-key-change-this-in-production"  # ⚠️ เปลี่ยนใน production
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Security
+security = HTTPBearer()
 
 # Step1 : Create a SQLAlchemy engine
 DATABASE_URL = 'postgresql://neondb_owner:npg_3heOIs0NPLum@ep-super-smoke-a1v9ddnw-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require'
 
-# สร้าง engine สำหรับ NeonDB
 engine = create_engine(
     DATABASE_URL,
     connect_args={
         "sslmode": "require",
     },
     pool_pre_ping=True,
-    pool_size=5,  # จำกัดจำนวน connection
+    pool_size=5,
     max_overflow=10,
-    echo=False  # เปิดเป็น True ถ้าอยากเห็น SQL queries
+    echo=False
 )
 
-# สร้าง Session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# สร้าง Base สำหรับ ORM
 Base = declarative_base()
 
 # Step2 : ORM class
-class Item(Base):
-    __tablename__ = "items"  # แก้ไขตรงนี้! ต้องเป็น __tablename__
+class User(Base):
+    __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    email = Column(String, index=True)
-    password = Column(String, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 # สร้างตารางในฐานข้อมูล
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Step3 : Pydantic model
-class ItemBased(BaseModel):
+# Step3 : Pydantic models
+class UserRegister(BaseModel):
     name: str
-    email: str
+    email: EmailStr
     password: str
 
-class ItemCreated(ItemBased):
-    pass
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
 
-class ItemResponse(ItemBased):
+class UserResponse(BaseModel):
     id: int
+    name: str
+    email: str
+    created_at: datetime
     
     class Config:
         from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
 
 # Dependency function
 def get_db():
@@ -170,28 +184,154 @@ def get_db():
     finally:
         db.close()
 
-# Step4 : CRUD Endpoints
-@app.post("/submit", response_model=ItemResponse)
-def submit_data(item: ItemCreated, db: Session = Depends(get_db)):
-    db_item = Item(**item.model_dump())
-    db.add(db_item)
+# function tools
+
+# check password is correct
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+
+# bcrypt password gen
+def get_password_hash(password: str) -> str:
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')
+
+# create token
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+# get user 1 record
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    
+    user = get_user_by_email(db, email=email)
+    if user is None:
+        raise credentials_exception
+    return user
+
+# Step4 : Auth Endpoints
+
+# Register pathway
+@app.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
+def register(user_data: UserRegister, db: Session = Depends(get_db)):
+    # ตรวจสอบว่า email มีในระบบแล้วหรือไม่
+    db_user = get_user_by_email(db, email=user_data.email)
+    if db_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
+    # สร้าง user ใหม่
+    hashed_password = get_password_hash(user_data.password)
+    db_user = User(
+        name=user_data.name,
+        email=user_data.email,
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
     db.commit()
-    db.refresh(db_item)
-    return db_item
+    db.refresh(db_user)
+    
+    # สร้าง access token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": db_user.email}, expires_delta=access_token_expires
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": db_user
+    }
 
-@app.get("/items")
-def get_all_items(db: Session = Depends(get_db)):
-    items = db.query(Item).all()
-    return {"items": items}
+# login pathway
+@app.post("/login", response_model=Token)
+def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
+    # ตรวจสอบว่ามี user อยู่ไหม
+    user = get_user_by_email(db, email=user_credentials.email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # ตรวจสอบรหัสผ่าน
+    if not verify_password(user_credentials.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # สร้าง access token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user
+    }
 
-@app.get("/items/{item_id}")
-def get_item(item_id: int, db: Session = Depends(get_db)):
-    item = db.query(Item).filter(Item.id == item_id).first()
-    if not item:
-        return {"error": "Item not found"}
-    return item
+#get current user
+@app.get("/me", response_model=UserResponse)
+async def get_me(current_user: User = Depends(get_current_user)):
+    """ดึงข้อมูล user ที่ login อยู่"""
+    return current_user
 
-# ตรวจสอบการเชื่อมต่อ
+@app.get("/protected")
+async def protected_route(current_user: User = Depends(get_current_user)):
+    """ตัวอย่าง route ที่ต้อง login ก่อน"""
+    return {
+        "message": f"Hello {current_user.name}! This is a protected route.",
+        "user_email": current_user.email
+    }
+
+# normal check
+@app.get("/users")
+def get_all_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """ดูรายการ users ทั้งหมด (ต้อง login)"""
+    users = db.query(User).all()
+    return {"users": users}
+
+@app.get("/users/{user_id}")
+def get_user(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """ดูข้อมูล user ตาม id (ต้อง login)"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+# check database
 @app.get("/ping-db")
 def ping_db(db: Session = Depends(get_db)):
     try:
@@ -202,4 +342,12 @@ def ping_db(db: Session = Depends(get_db)):
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World", "status": "FastAPI + NeonDB is running!"}
+    return {
+        "message": "FastAPI Auth System",
+        "endpoints": {
+            "register": "POST /register",
+            "login": "POST /login",
+            "me": "GET /me (requires auth)",
+            "protected": "GET /protected (requires auth)"
+        }
+    }
