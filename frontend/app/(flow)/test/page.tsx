@@ -3,6 +3,8 @@ import Flow from '../Flow'
 
 export default function TestPage() {
   return (
-    <div><Flow/></div>
+    <div className='min-h-screen'>
+      <Flow/>
+    </div>
   )
 }
