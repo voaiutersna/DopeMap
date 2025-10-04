@@ -132,13 +132,26 @@ const onDragStart : React.DragEventHandler<HTMLDivElement>   = (event) => {
           {/* <Controls /> */}
 
           {/* <Background /> */}
-    <div className="absolute top-2 right-2 z-50 w-48 h-48 bg-[#2f3131] rounded-md overflow-hidden shadow-md">
-      <MiniMap
-        nodeColor={(node) => (node.type === 'urlNode' ? '#1c459f' : '#f97316')}
-        nodeStrokeColor={() => '#4b4f51'}
-        nodeBorderRadius={4}
-      />
-    </div>
+<div className="absolute top-2 right-2 z-50 w-48 h-48 rounded-md overflow-hidden shadow-md">
+  <MiniMap
+    nodeColor={(node) => {
+      switch (node.type) {
+        case 'note':
+          return '#f59e0b'; // orange
+        case 'task':
+          return '#10b981'; // green
+        case 'link':
+          return '#3b82f6'; // blue
+        case 'ctext':
+          return '#8b5cf6'; // purple
+        default:
+          return '#9ca3af'; // gray for any other type
+      }
+    }}
+    nodeStrokeColor={() => '#ffffff'} // white border for visibility
+    nodeBorderRadius={4}
+  />
+</div>
         </ReactFlow>
 
       </div>
