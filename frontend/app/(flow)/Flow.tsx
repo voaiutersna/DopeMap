@@ -30,6 +30,7 @@ import Sidebar from './Sidebar';
 import TextNode from './node/TextNode';
 import NodeWrapper from './node/Nodewrapper';
 import Toolbar from './Toolbar';
+import { v4 as uuidv4 } from 'uuid';
 // import "./index.css"
 
 const nodeTypes = {
@@ -55,9 +56,8 @@ const nodeTypes = {
   ),
 };
  
-let id = 0;
-const getId = () => `dndnode_${id++}`;
- 
+
+const getId = () => `dndnode_${uuidv4()}`;
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([
@@ -114,7 +114,7 @@ const onDragStart : React.DragEventHandler<HTMLDivElement>   = (event) => {
     <div className="w-full h-full bg-[#2f3131]" >
         <ReactFlow
           nodes={nodes}
-          edges={edges} 
+          edges={edges}
           nodeTypes={nodeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -126,8 +126,8 @@ const onDragStart : React.DragEventHandler<HTMLDivElement>   = (event) => {
           defaultEdgeOptions={{ type: "step" }}
           snapToGrid={true}
           snapGrid={[20, 20]}
-          minZoom={0.5} 
-          maxZoom={2}    
+          minZoom={0.5}
+          maxZoom={2}
         >
           {/* <Controls /> */}
 

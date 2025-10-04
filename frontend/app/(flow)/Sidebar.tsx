@@ -25,7 +25,9 @@ return (
     draggable
     className="cursor-grab"
   >
-    <NoteNode data={{ title: "Note Node" }} />
+    <div className="pointer-events-none">
+      <NoteNode data={{ title: "Note Node" }} />
+    </div>
   </div>
 
   {/* Task Node */}
@@ -34,7 +36,10 @@ return (
     draggable
     className="cursor-grab"
   >
+        <div className="pointer-events-none">
+
     <TaskNode data={{ title: "Task Node" }} />
+        </div>
   </div>
 
   {/* Link Node */}
@@ -43,7 +48,10 @@ return (
     draggable
     className="cursor-grab"
   >
+        <div className="pointer-events-none">
+
     <LinkNode data={{ title: "Link Node", url: "https://example.com" }} />
+        </div>
   </div>
 
   {/* Text Node */}
@@ -52,7 +60,10 @@ return (
     draggable
     className="cursor-grab"
   >
+        <div className="pointer-events-none">
+
     <TextNode data={{ title: null }} />
+        </div>
   </div>
 </div>
 

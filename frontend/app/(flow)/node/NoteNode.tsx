@@ -27,7 +27,7 @@ export default function NoteNode({ data }: { data: NoteNodeData }) {
             h-20 min-h-[60px] max-h-[120px]
             p-2 text-gray-300 bg-[#1e1f1f]/10
             rounded-md focus:outline-none nodrag
-            resize-y z-
+            resize-y
           "
         />
       </div>
