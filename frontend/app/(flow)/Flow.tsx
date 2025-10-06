@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -31,40 +31,43 @@ import TextNode from './node/TextNode';
 import NodeWrapper from './node/Nodewrapper';
 import Toolbar from './Toolbar';
 import { v4 as uuidv4 } from 'uuid';
+import Editor from './edit/Editor';
 // import "./index.css"
 
-const nodeTypes = {
-  note: (props: any) => (
-    <NodeWrapper id={props.id}>
-      <NoteNode {...props} />
-    </NodeWrapper>
-  ),
-  task: (props: any) => (
-    <NodeWrapper id={props.id}>
-      <TaskNode {...props} />
-    </NodeWrapper>
-  ),
-  link: (props: any) => (
-    <NodeWrapper id={props.id}>
-      <LinkNode {...props} />
-    </NodeWrapper>
-  ),
-  ctext: (props: any) => (
-    <NodeWrapper id={props.id}>
-      <TextNode {...props} />
-    </NodeWrapper>
-  ),
-};
- 
 
 const getId = () => `dndnode_${uuidv4()}`;
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState([
-
-  ]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [editNodeId , setEditNodeId] = useState<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
+const nodeTypes = {
+  note: (props: any) => (
+    <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+      <NoteNode {...props} />
+    </NodeWrapper>
+  ),
+  task: (props: any) => (
+    <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+      <TaskNode {...props} />
+    </NodeWrapper>
+  ),
+  link: (props: any) => (
+    <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+      <LinkNode {...props} />
+    </NodeWrapper>
+  ),
+  ctext: (props: any) => (
+    <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+      <TextNode {...props} />
+    </NodeWrapper>
+  ),
+};
+
+ useEffect(()=> {
+  console.log("Test")
+ },[editNodeId])
   const [type,setType] = useDnD();
  
   const onConnect : OnConnect = useCallback((params:Node) => setEdges((eds : Edge) => addEdge(params, eds)), []);
@@ -106,6 +109,7 @@ const DnDFlow = () => {
 const onDragStart : React.DragEventHandler<HTMLDivElement>   = (event) => {
   event.dataTransfer.effectAllowed = 'move';
 };
+
 
  
   return (
@@ -156,6 +160,12 @@ const onDragStart : React.DragEventHandler<HTMLDivElement>   = (event) => {
 
       </div>
       <Sidebar />
+      {nodes.map((node) => {
+        if (node.id == editNodeId){
+          return <Editor key={node.id} editNode={node}/>
+        }
+      })
+      }
     </div>
   );
 };

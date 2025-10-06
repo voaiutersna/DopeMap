@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { LinkNodeData } from "../test/type";
+import { TextNodeData } from "../test/type";
+import { Node } from "@xyflow/react";
 
-export default function TextNode({ data }: { data: LinkNodeData }) {
+export default function TextNode({ data , nodes , onNodeDataChange }: { data: TextNodeData ,nodes? : Node, onNodeDataChange?: () => void }) {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const [value, setValue] = useState(data.title || "");
 
@@ -14,6 +15,13 @@ export default function TextNode({ data }: { data: LinkNodeData }) {
   useEffect(() => {
     resizeTextArea();
   }, [value]);
+
+  useEffect(() => {
+    const newdata : TextNodeData = {
+      title : value
+    }
+  // onNodeDataChange(newdata)
+  },[value])
 
   return (
     <div className="text-gray-300 relative flex justify-center items-center w-full">

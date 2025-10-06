@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { useReactFlow } from "@xyflow/react";
-import { MoreVertical } from "lucide-react"; // import icon
+import { MoreVertical } from "lucide-react"; 
+
 
 type NodeWrapperProps = {
-  id: string; // Node id for deletion
-  children: React.ReactNode; // The actual node content
+  id: string;
+  children: React.ReactNode;
+  setEditNodeId: React.Dispatch<React.SetStateAction<string | null>>;
 };
-
-export default function NodeWrapper({ id, children }: NodeWrapperProps) {
+export default function NodeWrapper({
+  id,
+  setEditNodeId,
+  children,
+}: NodeWrapperProps) {
   const { setNodes } = useReactFlow();
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -19,6 +24,10 @@ export default function NodeWrapper({ id, children }: NodeWrapperProps) {
     e.preventDefault();
     setMenuVisible((v) => !v);
   };
+
+  const handleEdit = () => {
+    setEditNodeId(id)
+  }
 
   return (
 <div
@@ -51,6 +60,12 @@ export default function NodeWrapper({ id, children }: NodeWrapperProps) {
       className="block w-full text-left hover:bg-[#4b4f51]/30 px-2 py-1 rounded"
     >
       Delete Node
+    </button>
+    <button
+      onClick={handleEdit}
+      className="block w-full text-left hover:bg-[#4b4f51]/30 px-2 py-1 rounded"
+    >
+      Edit Node
     </button>
   </div>
 </div>

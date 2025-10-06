@@ -1,5 +1,10 @@
+export type NodeType = 'note' | 'task' | 'link' | 'ctext';
 export  type NoteNodeData = {
   label: string;
+};
+
+export  type TextNodeData = {
+  title: string;
 };
 
 export type TaskNodeData = {
