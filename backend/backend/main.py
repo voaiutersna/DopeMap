@@ -108,6 +108,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime, timedelta
 import bcrypt
 from jose import jwt, JWTError
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # JWT Configuration
 SECRET_KEY = "your-secret-key-change-this-in-production"  # ⚠️ เปลี่ยนใน production
@@ -148,6 +150,15 @@ class User(Base):
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # หน้า Next
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Step3 : Pydantic models
 class UserRegister(BaseModel):
