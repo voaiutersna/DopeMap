@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import type { LinkNodeData } from '../types'; // adjust path if needed
+import { CustomNode } from '../test/type';
+import { useReactFlow } from '@xyflow/react';
 
 type LinkEditorProps = {
   onClose: () => void;
-  data: LinkNodeData;
-  onSave: (newData: LinkNodeData) => void;
+  node: CustomNode;
 };
 
-export default function LinkEditor({ onClose, data, onSave }: LinkEditorProps) {
-  const [title, setTitle] = useState(data?.title);
-  const [url, setUrl] = useState(data?.url);
+export default function LinkEditor({ onClose, node }: LinkEditorProps) {
+ const { setNodes } = useReactFlow(); 
+  const [title, setTitle] = useState(node?.data?.title ?? "");
+  const [url, setUrl] = useState(node?.data?.url ?? "");
+
 
   const handleSave = () => {
-    onSave({ title, url });
+    setNodes((prevNodes) =>
+      prevNodes.map((n) =>
+        n.id === node.id
+          ? {
+              ...n,
+              data: {
+                ...n.data,
+                title,
+                url,
+              },
+            }
+          : n
+      )
+    );
+
     onClose();
   };
 
   return (
     <div className="container mx-auto p-6 font-mono">
       <div className="flex flex-col gap-4">
-        {/* Header */}
         <div className="flex w-full justify-between items-center">
           <h1 className="text-lg font-semibold">Edit Url Node</h1>
           <X
@@ -29,7 +45,6 @@ export default function LinkEditor({ onClose, data, onSave }: LinkEditorProps) {
           />
         </div>
 
-        {/* Input fields */}
         <div className="flex flex-col space-y-6">
           <label className="flex flex-col space-y-3">
             <span className="text-sm text-gray-500">Title</span>

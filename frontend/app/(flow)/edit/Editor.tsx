@@ -5,11 +5,7 @@ import TextEditor from './TextEditor'
 import NoteEditor from './NoteEditor'
 import TaskEditor from './TaskEditor'
 import { NodeType } from '../test/type'
-
-
-type CustomNode = Node & {
-  type: NodeType;
-};
+import { CustomNode } from '../test/type'
 
 const nodeTypesMap: Record<NodeType, React.FC<{ onClose: () => void }>> = {
   note: NoteEditor,
@@ -23,5 +19,5 @@ export default function Editor({ editNode,setEditNodeId }: { editNode: CustomNod
     setEditNodeId(null)
   }
 const EditorComponent = nodeTypesMap[editNode.type];
-  return <EditorComponent onClose={onClose} />;
+  return <EditorComponent onClose={onClose} node={editNode}/>;
 }

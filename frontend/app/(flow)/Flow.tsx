@@ -161,7 +161,7 @@ const DnDFlow = () => {
       </div>
       <Sidebar />
       <div className={`fixed ${!editNodeId ? "-bottom-full" : "bottom-0"} w-full h-[100dvh] duration-500 flex items-end z-50`}>
-        <div className='w-full h-[50dvh] bg-[#1e1f1f]  text-gray-300 border border-[#3a3d3f] rounded-lg flex justify-center'>
+        <div className='w-full min-h-[50dvh] bg-[#1e1f1f]  text-gray-300 border border-[#3a3d3f] rounded-lg flex justify-center'>
 
           {nodes.map((node) => {
             if (node.id == editNodeId) {
