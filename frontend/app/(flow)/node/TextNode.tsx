@@ -16,22 +16,14 @@ export default function TextNode({ data , nodes , onNodeDataChange }: { data: Te
     resizeTextArea();
   }, [value]);
 
-  useEffect(() => {
-    const newdata : TextNodeData = {
-      title : value
-    }
-  // onNodeDataChange(newdata)
-  },[value])
 
   return (
     <div className="text-gray-300 relative flex justify-center items-center w-full">
-      <textarea
-        ref={textAreaRef}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Type here..."
+      <p
         className="text-xl font-mono p-3 text-center bg-transparent focus:outline-none resize-none w-full overflow-hidden"
-      />
+      >
+        {data.title || "Text Here"}
+      </p>
     </div>
   );
 }

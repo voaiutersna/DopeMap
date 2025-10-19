@@ -160,17 +160,26 @@ const DnDFlow = () => {
 
       </div>
       <Sidebar />
-      <div className={`fixed ${!editNodeId ? "-bottom-full" : "bottom-0"} w-full h-[100dvh] duration-500 flex items-end z-50`}>
-        <div className='w-full min-h-[50dvh] bg-[#1e1f1f]  text-gray-300 border border-[#3a3d3f] rounded-lg flex justify-center'>
+    <div
+  className={`fixed inset-0 z-50 transition-all duration-500 ${
+    editNodeId ? "translate-y-0" : "translate-y-full"
+  } flex items-end`}
+>
 
-          {nodes.map((node) => {
-            if (node.id == editNodeId) {
-              return <Editor key={node.id} editNode={node} setEditNodeId={setEditNodeId}/>
-            }
-          })
-          }
-        </div>
-      </div>
+  {/* Editor Panel */}
+  <div className="relative w-full max-h-[100dvh] bg-[#1e1f1f] text-gray-300 border-[#3a3d3f]  shadow-xl overflow-y-auto">
+    {nodes.map(
+      (node) =>
+        node.id === editNodeId && (
+          <Editor
+            key={node.id}
+            editNode={node}
+            setEditNodeId={setEditNodeId}
+          />
+        )
+    )}
+  </div>
+</div>
     </div>
   );
 };
