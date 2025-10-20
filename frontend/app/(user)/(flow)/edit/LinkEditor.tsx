@@ -35,7 +35,7 @@ export default function LinkEditor({ onClose, node }: LinkEditorProps) {
   };
 
   return (
-    <div className="container mx-auto p-6 font-mono">
+    <div className="container mx-auto p-6 font-mono py-12">
       <div className="flex flex-col gap-4">
         <div className="flex w-full justify-between items-center">
           <h1 className="text-lg font-semibold">Edit Url Node</h1>

@@ -2,14 +2,12 @@ import React, { useCallback } from 'react';
 import { Position, Handle } from '@xyflow/react';
 import { NoteNodeData } from '../test/type';
 import { Textarea } from '@/components/ui/textarea';
+import { MdPreview } from 'md-editor-rt';
 
 export default function NoteNode({ data }: { data: NoteNodeData }) {
-  const onChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((evt) => {
-    console.log(evt?.target?.value);
-  }, []);
 
   return (
-    <div className="bg-[#2f3131] text-gray-300 border border-[#4b4f51] rounded-md w-56 shadow-md relative">
+    <div className="bg-[#2f3131] text-gray-300 border border-[#4b4f51] rounded-md  shadow-md relative">
       {/* Title */}
       <div className="text-xs font-mono tracking-wider border-b border-[#4b4f51] w-full p-3">
         {'Note Node'}
@@ -17,17 +15,16 @@ export default function NoteNode({ data }: { data: NoteNodeData }) {
 
       {/* Textarea */}
       <div className="p-3">
-        <textarea
+        <MdPreview
           id="text"
-          name="text"
+          value={data.content}
           placeholder="Type here..."
-          onChange={onChange}
           className="
-            w-full min-w-[200px] max-w-[300px]
-            h-20 min-h-[60px] max-h-[120px]
+            w-full min-w-[200px] 
+            h-20 min-h-[60px] 
             p-2 text-gray-300 bg-[#1e1f1f]/10
             rounded-md focus:outline-none nodrag
-            resize-y
+            resize-none
           "
         />
       </div>

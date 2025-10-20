@@ -4,6 +4,7 @@ export type NodeType = "note" | "task" | "link" | "ctext";
 
 export type NoteNodeData = {
   label: string;
+  content : string;
 };
 
 export type TextNodeData = {

@@ -40,9 +40,9 @@ export default function NodeWrapper({
   <div className="absolute -top-2 -right-2">
     <button
       onClick={() => setMenuVisible((v) => !v)}
-      className="text-gray-400 hover:text-gray-200 z-20 bg-[#2f3131] border border-[#4b4f51] rounded-full w-5 h-5 flex justify-center items-center"
+      className="text-gray-400 hover:text-gray-200 z-20 bg-[#2f3131] border border-[#4b4f51] rounded-full w-5 h-5 flex justify-center items-center cursor-pointer"
     >
-      <MoreVertical className="w-4 h-4" />
+      <MoreVertical className="w-4 h-4  cursor-pointer" />
     </button>
 
     {/* Menu appears to the right of the button with auto width */}
