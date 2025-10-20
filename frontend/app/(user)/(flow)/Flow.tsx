@@ -113,7 +113,7 @@ const DnDFlow = () => {
 
 
   return (
-    <div className="dndflow flex w-screen h-screen relative">
+    <div className="dndflow flex w-full h-[100dvh]  relative ">
       <Toolbar />
       <div className="w-full h-full bg-[#2f3131] relative" >
         <ReactFlow

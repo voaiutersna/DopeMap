@@ -14,7 +14,8 @@ export default function NoteEditor({ onClose, node }: NoteEditorProps) {
   const { setNodes } = useReactFlow();
 
   const initialLabel = (node.data as any)?.label ?? "Untitled Note";
-  const initialContent = (node.data as any)?.content ?? "# Start writing your note...";
+  const initialContent =
+    (node.data as any)?.content ?? "# Start writing your note...";
 
   const [label, setLabel] = useState(initialLabel);
   const [content, setContent] = useState(initialContent);
@@ -38,7 +39,7 @@ export default function NoteEditor({ onClose, node }: NoteEditorProps) {
   };
 
   return (
-     <div className=" container mx-auto min-h-[100dvh] text-zinc-100 p-6 font-mono flex flex-col gap-6 overflow-y-auto py-12">
+    <div className=" container mx-auto min-h-[100dvh] text-zinc-100 p-6 font-mono flex flex-col gap-6 overflow-y-auto py-12">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">Edit Note</h1>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import 'md-editor-rt/lib/style.css';
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,10 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-[100dvh]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-[100dvh] relative`}
       >
         <Navbar/>
         {children}
+        <Footer />
       </body>
     </html>
   );
