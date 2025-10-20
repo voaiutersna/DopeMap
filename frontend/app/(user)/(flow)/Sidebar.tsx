@@ -14,7 +14,7 @@ export default function NodeSidebar() {
   };
 
 return (
-<aside className="p-4 bg-[#1e1f1f] border-l border-[#4b4f51] min-w-[220px] text-gray-300 font-mono">
+<aside className="py-10 p-4 bg-[#1e1f1f] border-l border-[#4b4f51] min-w-[220px] text-gray-300 font-mono">
   <div className="description mb-4 text-sm">
     Drag these nodes to the pane on the right.
   </div>

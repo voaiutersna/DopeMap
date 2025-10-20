@@ -113,8 +113,11 @@ const DnDFlow = () => {
 
 
   return (
-    <div className="dndflow flex w-full h-[100dvh]  relative ">
+    <div className="dndflow flex w-full h-[calc(100vh-56px)]  relative  justify-center">
+      <div className='container absolute top-4 left-0-translate-x-1/2'>
+
       <Toolbar />
+      </div>
       <div className="w-full h-full bg-[#2f3131] relative" >
         <ReactFlow
           nodes={nodes}

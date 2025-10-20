@@ -52,7 +52,7 @@ export default function Toolbar() {
 
   return (
     <>
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 bg-[#2f3131] border border-[#4b4f51] rounded-md p-2 shadow-md z-50">
+      <div className="absolute top-4 left-0 flex gap-2 bg-[#2f3131] border border-[#4b4f51] rounded-md p-2 shadow-md z-50">
         <button
           onClick={zoomIn}
           className="p-2 bg-[#1e1f1f] hover:bg-[#3a3c3c] rounded-md text-gray-300 flex items-center justify-center"
