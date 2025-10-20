@@ -209,29 +209,31 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
             </label>
 
             {/* Score (1–10) */}
-<label className="flex flex-col space-y-3 w-48">
-  <span className="text-sm text-gray-500">Score (1–10)</span>
-  <input
-    type="number"
-    min={1}
-    max={10}
-    value={activeTask.dificultScore === 0 ? "" : activeTask.dificultScore}
-    placeholder="(1-10)"
-    onChange={(e) =>
-      handleTaskChange(
-        activeIndex,
-        "dificultScore",
-        e.target.value === "" ? 0 : Number(e.target.value)
-      )
-    }
-    className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0 
+            <label className="flex flex-col space-y-3 w-48">
+              <span className="text-sm text-gray-500">Score (1–10)</span>
+              <input
+                type="number"
+                min={1}
+                max={10}
+                value={
+                  activeTask.dificultScore === 0 ? "" : activeTask.dificultScore
+                }
+                placeholder="(1-10)"
+                onChange={(e) =>
+                  handleTaskChange(
+                    activeIndex,
+                    "dificultScore",
+                    e.target.value === "" ? 0 : Number(e.target.value)
+                  )
+                }
+                className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0 
       [&::-webkit-inner-spin-button]:appearance-none 
       [&::-webkit-outer-spin-button]:appearance-none 
       [&::-webkit-inner-spin-button]:m-0
       [&::-webkit-outer-spin-button]:m-0
       [-moz-appearance:textfield]"
-  />
-</label>
+              />
+            </label>
           </div>
 
           {/* Markdown Editor */}

@@ -18,9 +18,13 @@ export default function RegisterPage() {
         { name, email, password }
       );
 
+      console.log(response);
+
       if (response.data.success) {
         console.log("Registered:", response.data.data);
-        // Save token or redirect
+        const { access_token } = response.data.data;
+        localStorage.setItem("token", access_token);
+
       } else {
         setError(response.data.error || "Registration failed");
       }
@@ -30,9 +34,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-zinc-950 p-6 font-mono">
-      <div className="w-full max-w-md bg-zinc-900 text-gray-100 rounded-2xl shadow-lg p-6 space-y-6">
-        <h1 className="text-2xl font-semibold text-center">Register</h1>
+    <div className="bg-[#2f3131] flex flex-col items-center justify-items-center h-[calc(100vh-56px)] font-mono text-zinc-200">
+       <div className="container flex flex-col justify-center items-center h-full space-y-5">
+
+
+        <h1 className="text-2xl font-semibold text-start">Register</h1>
         {error && <div className="text-red-500 text-sm">{error}</div>}
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>

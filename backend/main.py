@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import Union, Optional
+from typing import Generic, TypeVar, Union, Optional
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import create_engine, text, Column, Integer, String, Float, DateTime
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
@@ -59,6 +59,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Step3 : Pydantic models
+
+
 class UserRegister(BaseModel):
     name: str
     email: EmailStr
@@ -81,9 +83,14 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user: UserResponse
+    
+T = TypeVar("T")  # Dynamic type placeholder
 
-class TokenData(BaseModel):
-    email: Optional[str] = None
+class APIResponse(BaseModel, Generic[T]):
+    success: bool
+    data: Optional[T] = None
+    error: Optional[str] = None
+
 
 # Dependency function
 def get_db():
@@ -146,39 +153,37 @@ async def get_current_user(
 # Step4 : Auth Endpoints
 
 # Register pathway
-@app.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
+@app.post("/register", response_model=APIResponse, status_code=status.HTTP_201_CREATED)
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
-    # ตรวจสอบว่า email มีในระบบแล้วหรือไม่
     db_user = get_user_by_email(db, email=user_data.email)
     if db_user:
-        # print("have")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    
-    # สร้าง user ใหม่
+
     hashed_password = get_password_hash(user_data.password)
     db_user = User(
         name=user_data.name,
         email=user_data.email,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    
-    # สร้าง access token
+
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": db_user.email}, expires_delta=access_token_expires
     )
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": db_user
-    }
+    return APIResponse[Token](
+        success=True,
+        data=Token(
+            access_token=access_token,
+            token_type="bearer",
+            user=db_user
+        )
+    )
 
 # login pathway
 @app.post("/login", response_model=Token)
