@@ -53,11 +53,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # or "*"
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type", "*"],
 )
+
 # Step3 : Pydantic models
 
 
@@ -218,10 +219,19 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     }
 
 #get current user
-@app.get("/me", response_model=UserResponse)
+@app.get("/me", response_model=APIResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
     """ดึงข้อมูล user ที่ login อยู่"""
-    return current_user
+    return APIResponse[UserResponse](
+        success=True,
+        data = UserResponse(
+            id = current_user.id,
+            name = current_user.name,
+            email = current_user.email,
+            created_at = current_user.created_at,
+            
+        )
+    )
 
 @app.get("/protected")
 async def protected_route(current_user: User = Depends(get_current_user)):
