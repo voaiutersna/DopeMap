@@ -15,6 +15,15 @@ from .database import SessionLocal, engine, Base, Session
 from .schemas import UserLogin, UserRegister, UserResponse, APIResponse, Token
 from .models import User
 
+# import routers
+from .routes.root import router as root_router
+from .routes.ping_db import router as ping_router
+from .routes.register import router as register_router
+from .routes.login import router as login_router
+from .routes.me import router as me_router
+from .routes.protected import router as protected_router
+from .routes.get_users import router as users_router
+from .routes.get_user_by_id import router as user_router
 
 
 # JWT Configuration
@@ -38,178 +47,12 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "*"],
 )
 
-# function tools
-
-# check password is correct
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
-
-# bcrypt password gen
-def get_password_hash(password: str) -> str:
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed.decode('utf-8')
-
-# create token
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-# get user 1 record
-def get_user_by_email(db: Session, email: str):
-    return db.query(User).filter(User.email == email).first()
-
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
-):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        token = credentials.credentials
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-    
-    user = get_user_by_email(db, email=email)
-    if user is None:
-        raise credentials_exception
-    return user
-
-# Step4 : Auth Endpoints
-
-# Register pathway
-@app.post("/register", response_model=APIResponse, status_code=status.HTTP_201_CREATED)
-def register(user_data: UserRegister, db: Session = Depends(get_db)):
-    db_user = get_user_by_email(db, email=user_data.email)
-    if db_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
-
-    hashed_password = get_password_hash(user_data.password)
-    db_user = User(
-        name=user_data.name,
-        email=user_data.email,
-        hashed_password=hashed_password,
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": db_user.email}, expires_delta=access_token_expires
-    )
-    return APIResponse[Token](
-        success=True,
-        data=Token(
-            access_token=access_token,
-            token_type="bearer",
-            user=db_user
-        )
-    )
-
-# login pathway
-@app.post("/login", response_model=Token)
-def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
-    # ตรวจสอบว่ามี user อยู่ไหม
-    user = get_user_by_email(db, email=user_credentials.email)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # ตรวจสอบรหัสผ่าน
-    if not verify_password(user_credentials.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # สร้าง access token
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
-    )
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": user
-    }
-
-#get current user
-@app.get("/me", response_model=APIResponse)
-async def get_me(current_user: User = Depends(get_current_user)):
-    """ดึงข้อมูล user ที่ login อยู่"""
-    return APIResponse[UserResponse](
-        success=True,
-        data = UserResponse(
-            id = current_user.id,
-            name = current_user.name,
-            email = current_user.email,
-            created_at = current_user.created_at,
-            
-        )
-    )
-
-@app.get("/protected")
-async def protected_route(current_user: User = Depends(get_current_user)):
-    """ตัวอย่าง route ที่ต้อง login ก่อน"""
-    return {
-        "message": f"Hello {current_user.name}! This is a protected route.",
-        "user_email": current_user.email
-    }
-
-# normal check
-@app.get("/users")
-def get_all_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    """ดูรายการ users ทั้งหมด (ต้อง login)"""
-    users = db.query(User).all()
-    return {"users": users}
-
-@app.get("/users/{user_id}")
-def get_user(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    """ดูข้อมูล user ตาม id (ต้อง login)"""
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-# check database
-@app.get("/ping-db")
-def ping_db(db: Session = Depends(get_db)):
-    try:
-        result = db.execute(text("SELECT 1"))
-        return {"status": "ok", "message": "✅ Database connected successfully"}
-    except Exception as e:
-        return {"status": "error", "message": f"❌ Connection failed: {str(e)}"}
-
-@app.get("/")
-def read_root():
-    return {
-        "message": "FastAPI Auth System",
-        "endpoints": {
-            "register": "POST /register",
-            "login": "POST /login",
-            "me": "GET /me (requires auth)",
-            "protected": "GET /protected (requires auth)"
-        }
-    }
+# รวม routers ทั้งหมด
+app.include_router(root_router)
+app.include_router(ping_router)
+app.include_router(register_router)
+app.include_router(login_router)
+app.include_router(me_router)
+app.include_router(protected_router)
+app.include_router(users_router)
+app.include_router(user_router)
