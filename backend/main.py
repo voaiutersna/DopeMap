@@ -11,6 +11,12 @@ from jose import jwt, JWTError
 from fastapi.middleware.cors import CORSMiddleware
 
 
+from .database import SessionLocal, engine, Base, Session
+from .schemas import UserLogin, UserRegister, UserResponse, APIResponse, Token
+from .models import User
+
+
+
 # JWT Configuration
 SECRET_KEY = "your-secret-key-change-this-in-production"  # ⚠️ เปลี่ยนใน production
 ALGORITHM = "HS256"
@@ -18,33 +24,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Security
 security = HTTPBearer()
-
-# Step1 : Create a SQLAlchemy engine
-DATABASE_URL = 'postgresql://neondb_owner:npg_3heOIs0NPLum@ep-super-smoke-a1v9ddnw-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require'
-
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={
-        "sslmode": "require",
-    },
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
-    echo=False
-)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-# Step2 : ORM class
-class User(Base):
-    __tablename__ = "users"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
 
 # สร้างตารางในฐานข้อมูล
 Base.metadata.create_all(bind=engine)
@@ -58,48 +37,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["Authorization", "Content-Type", "*"],
 )
-
-# Step3 : Pydantic models
-
-
-class UserRegister(BaseModel):
-    name: str
-    email: EmailStr
-    password: str
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-    created_at: datetime
-    
-    class Config:
-        from_attributes = True
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    user: UserResponse
-    
-T = TypeVar("T")  # Dynamic type placeholder
-
-class APIResponse(BaseModel, Generic[T]):
-    success: bool
-    data: Optional[T] = None
-    error: Optional[str] = None
-
-
-# Dependency function
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # function tools
 
