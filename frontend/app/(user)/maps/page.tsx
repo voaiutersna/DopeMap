@@ -87,12 +87,6 @@ export default function MapsPage() {
                 </div>
 
                 <div className="flex justify-between mt-4">
-                  <button
-                    onClick={() => alert(`Viewing: ${map.title}`)}
-                    className="px-3 py-1 border border-blue-500 text-blue-300 rounded-md hover:bg-blue-500/10 transition"
-                  >
-                    View
-                  </button>
 
                   <button
                     onClick={() => toggleEnroll(map.id)}
