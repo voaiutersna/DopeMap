@@ -187,7 +187,7 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
     )
 
 # login pathway
-@app.post("/login", response_model=Token)
+@app.post("/login", response_model=APIResponse)
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     # ตรวจสอบว่ามี user อยู่ไหม
     user = get_user_by_email(db, email=user_credentials.email)
@@ -212,11 +212,14 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
         data={"sub": user.email}, expires_delta=access_token_expires
     )
     
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": user
-    }
+    return APIResponse[Token](
+        success=True,
+        data=Token(
+            access_token=access_token,
+            token_type="bearer",
+            user=user
+        )
+    )
 
 #get current user
 @app.get("/me", response_model=APIResponse)
