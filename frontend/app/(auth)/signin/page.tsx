@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { api, APIResponse } from "@/api";
 
 export default function SignInPage() {
@@ -12,18 +13,16 @@ export default function SignInPage() {
     setError("");
 
     try {
-      const response = await api.post<
-        APIResponse<{ access_token: string }>
-      >("/login", { email, password });
+      const response = await api.post<APIResponse<{ access_token: string }>>(
+        "/login",
+        { email, password }
+      );
 
-      console.log("Response:", response);
+      console.log(response);
 
       if (response.data.success) {
-        console.log("Logged in:", response.data.data);
         const { access_token } = response.data.data;
-
         localStorage.setItem("token", access_token);
-
       } else {
         setError(response.data.error || "Login failed");
       }
@@ -44,6 +43,7 @@ export default function SignInPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
+            autoComplete="email"
             className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-0 duration-200"
             required
           />
@@ -53,6 +53,7 @@ export default function SignInPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
+            autoComplete="current-password"
             className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-0 duration-200"
             required
           />
@@ -64,6 +65,16 @@ export default function SignInPage() {
             Sign In
           </button>
         </form>
+
+        <p className="text-sm text-zinc-400 mt-3">
+          Don’t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-blue-400 hover:underline hover:text-blue-300 transition-colors"
+          >
+            Register here
+          </Link>
+        </p>
       </div>
     </div>
   );
