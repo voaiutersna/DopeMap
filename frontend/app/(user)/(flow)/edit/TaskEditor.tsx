@@ -5,6 +5,7 @@ import "md-editor-rt/lib/style.css";
 import { X, PlusCircle, Trash2 } from "lucide-react";
 import type { CustomNode, Task } from "../test/type";
 import DifficultyDropdown from "./DifficultyDropdown";
+import { v4 as uuidv4 } from 'uuid';
 
 type TaskEditorProps = {
   onClose: () => void;
@@ -19,6 +20,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
       ? (node.data as any).tasks
       : [
           {
+            id: uuidv4(), // ✅ Generate UUID
             title: "",
             description: "",
             content: "# Write your task content here...",
@@ -34,7 +36,6 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleTaskChange = (index: number, field: keyof Task, value: any) => {
-    console.log("", field, value);
     setTasks((prev) =>
       prev.map((t, i) => (i === index ? { ...t, [field]: value } : t))
     );
@@ -44,6 +45,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
     setTasks((prev) => [
       ...prev,
       {
+        id: uuidv4(), // ✅ Each new task gets a UUID
         title: "",
         description: "",
         content: "# New Task...",

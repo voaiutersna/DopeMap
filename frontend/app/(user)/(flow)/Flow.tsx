@@ -35,7 +35,7 @@ import Editor from './edit/Editor';
 // import "./index.css"
 
 
-const getId = () => `dndnode_${uuidv4()}`;
+const getId = () => `${uuidv4()}`;
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
@@ -43,6 +43,7 @@ const DnDFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [editNodeId, setEditNodeId] = useState<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
+  
   const nodeTypes = {
     note: (props: any) => (
       <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
