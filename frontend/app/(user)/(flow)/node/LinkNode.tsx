@@ -7,13 +7,10 @@ export default function LinkNode({ data }: { data: LinkNodeData }) {
   return (
 <div className="bg-[#2f3131] text-gray-300 border border-[#4b4f51] rounded-md w-56 relative">
   {/* Title */}
-  <div className="text-xs font-mono tracking-wider border-b border-[#4b4f51] w-full p-3">
-    Url Node
-  </div>
 
   {/* Content */}
   <div className="flex justify-between items-center p-3">
-    <p className="text-[#1c459f]">{data.title || "test"}</p>
+    <p className="">{data.title || "test"}</p>
     <div className="w-10 h-10 rounded-full border border-[#4b4f51] flex items-center justify-center hover:bg-black/10 transition-colors duration-200 group relative z-20">
       <Link className="w-4 h-4 cursor-pointer" />
       {/* Tooltip */}

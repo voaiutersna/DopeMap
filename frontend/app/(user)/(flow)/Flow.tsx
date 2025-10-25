@@ -33,11 +33,11 @@ import Toolbar from "./Toolbar";
 import { v4 as uuidv4 } from "uuid";
 import Editor from "./edit/Editor";
 import ViewSidebar from "./view/[flowId]/ViewSideBar";
-// import "./index.css"
+import { defaultLinkNodeData, defaultNoteNodeData, defaultTaskNodeData, defaultTextNodeData } from "./defaultNodeData";
 
 const getId = () => `${uuidv4()}`;
 
-const DnDFlow = ({ isEdit }: { isEdit?: boolean }) => {
+const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId: any,initialData? : any}) => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -82,7 +82,13 @@ const DnDFlow = ({ isEdit }: { isEdit?: boolean }) => {
       ),
   };
 
-  useEffect(() => {}, [editNodeId]);
+   useEffect(() => {
+    if (initialData.roadmap_data && (initialData.roadmap_data.nodes || initialData.roadmap_data.edges)) {
+      setNodes(initialData.roadmap_data.nodes || []);
+      setEdges(initialData.roadmap_data.edges || []);
+    }
+  }, [initialData, setNodes, setEdges]);
+
 
   const [type, setType] = useDnD();
 
@@ -100,33 +106,46 @@ const DnDFlow = ({ isEdit }: { isEdit?: boolean }) => {
   );
 
   const onDrop: React.DragEventHandler<HTMLDivElement> = useCallback(
-    (event) => {
-      event.preventDefault();
+  (event) => {
+    event.preventDefault();
 
-      // check if the dropped element is valid
-      if (!type) {
-        return;
-      }
+    if (!type) return;
 
-      // project was renamed to screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-      console.log(type);
-      const newNode = {
-        id: getId(),
-        type: type as unknown as string,
-        position,
-        data: { label: `${type} node` },
-      };
+    const position = screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
 
-      setNodes((nds: Node) => nds.concat(newNode));
-    },
-    [screenToFlowPosition, type]
-  );
+    // Map type to default data
+    let data;
+    switch (type) {
+      case "note":
+        data = { ...defaultNoteNodeData };
+        break;
+      case "task":
+        data = { ...defaultTaskNodeData };
+        break;
+      case "link":
+        data = { ...defaultLinkNodeData };
+        break;
+      case "ctext":
+        data = { ...defaultTextNodeData };
+        break;
+      default:
+        data = { label: `${type} node` };
+    }
+
+    const newNode: Node = {
+      id: getId(),
+      type: type,
+      position,
+      data,
+    };
+
+    setNodes((nds) => nds.concat(newNode));
+  },
+  [screenToFlowPosition, type]
+);
 
   const onDragStart: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.dataTransfer.effectAllowed = "move";
@@ -136,7 +155,7 @@ const DnDFlow = ({ isEdit }: { isEdit?: boolean }) => {
     <div className="dndflow flex w-full h-[calc(100vh-56px)]  relative  justify-center">
       {isEdit && (
         <div className="container absolute top-4 left-0-translate-x-1/2">
-          <Toolbar />
+          <Toolbar roadmapId={roadmapId} initialData={initialData}/>
         </div>
       )}
       <div className="w-full h-full bg-[#2f3131] relative">
@@ -214,10 +233,10 @@ const DnDFlow = ({ isEdit }: { isEdit?: boolean }) => {
   );
 };
 
-export default ({ isEdit }: { isEdit?: boolean }) => (
+export default ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId: any,initialData? : any}) => (
   <ReactFlowProvider>
     <DnDProvider>
-      <DnDFlow isEdit={isEdit} />
+      <DnDFlow isEdit={isEdit} roadmapId={roadmapId} initialData={initialData}/>
     </DnDProvider>
   </ReactFlowProvider>
 );

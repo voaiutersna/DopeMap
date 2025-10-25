@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "../layout";
 import { api } from "@/api";
 import Link from "next/link";
+import { getRoadmaps } from "../roadmap-api";
+import { getHistory } from "../history-api";
 
 type Roadmap = {
   id: string;
@@ -33,11 +35,11 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const roadmapRes = await api.get("/roadmaps/");
-        setRoadmaps(roadmapRes.data.data);
+        const roadmap = await getRoadmaps();
+        setRoadmaps(roadmap);
 
-        const historyRes = await api.get("/roadmap-history/");
-        setHistory(historyRes.data.data);
+        const history = await getHistory();
+        setHistory(history);
       } catch (err) {
         console.error("Failed to fetch data", err);
       } finally {
@@ -75,7 +77,7 @@ export default function ProfilePage() {
       const payload = {
         title: editing.title,
         description: editing.description,
-        roadmap_data: {},
+
         is_public: editing.is_public,
       };
       const res = await api.put(`/roadmaps/${editing.id}`, payload);
@@ -194,7 +196,7 @@ export default function ProfilePage() {
         {/* --- HISTORY --- */}
         <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">📜 Your Roadmap History</h2>
-          {history.length === 0 ? (
+          {history == null ? (
             <div className="text-zinc-400">No history yet.</div>
           ) : (
             <div className="space-y-3">

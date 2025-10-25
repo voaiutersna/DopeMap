@@ -90,7 +90,8 @@ def update_roadmap(
 
     rm.title = payload.title
     rm.description = payload.description
-    rm.roadmap_data = payload.roadmap_data
+    if payload.roadmap_data:
+        rm.roadmap_data = payload.roadmap_data
     rm.is_public = payload.is_public
 
     db.commit()

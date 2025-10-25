@@ -10,7 +10,7 @@ export default function NoteNode({ data }: { data: NoteNodeData }) {
     <div className="bg-[#2f3131] text-gray-300 border border-[#4b4f51] rounded-md  shadow-md relative">
       {/* Title */}
       <div className="text-xs font-mono tracking-wider border-b border-[#4b4f51] w-full p-3">
-        {'Note Node'}
+        {data.label}
       </div>
 
       {/* Textarea */}
@@ -18,7 +18,6 @@ export default function NoteNode({ data }: { data: NoteNodeData }) {
         <MdPreview
           id="text"
           value={data.content}
-          placeholder="Type here..."
           className="
             w-full min-w-[200px] 
             h-20 min-h-[60px] 
