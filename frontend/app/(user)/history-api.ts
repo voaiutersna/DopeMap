@@ -3,7 +3,7 @@ import { APIResponse } from "@/api";
 
 export const getHistory = async () => {
     try {
-        const res = await api.get<APIResponse<any[]>>("/roadmap-history")
+        const res = await api.get<APIResponse<any[]>>("/history")
         if (res.data.success) {
             return res.data.data
         } else {
@@ -17,7 +17,7 @@ export const getHistory = async () => {
 
 export const getHistoryById = async (historyId: string) => {
     try {
-        const res = await api.get<APIResponse<any>>(`/roadmap-history/${historyId}`)
+        const res = await api.get<APIResponse<any>>(`/history/${historyId}`)
         if (res.data.success) {
             return res.data.data
         } else {

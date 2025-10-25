@@ -28,8 +28,10 @@ class UserResponse(BaseModel):
     email: str
     created_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class Token(BaseModel):
     access_token: str
@@ -66,9 +68,13 @@ class RoadmapHistoryOut(RoadmapHistoryBase):
     id: UUID
     user_id: UUID
     enrolled_at: datetime
+    roadmap_title: str = ""
+    roadmap_description: str = ""
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class RoadmapBase(BaseModel):
     title: str

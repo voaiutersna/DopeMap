@@ -3,7 +3,7 @@ from uuid import UUID
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload
 
 from app.schemas import APIResponse, RoadmapHistoryOut, RoadmapHistoryCreate
 from app.models import RoadmapHistory, User
@@ -39,29 +39,42 @@ async def get_all_histories(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    histories = db.query(RoadmapHistory).filter(
-        RoadmapHistory.user_id == current_user.id
-    ).all()
+    histories = db.query(RoadmapHistory)\
+        .options(joinedload(RoadmapHistory.roadmap))\
+        .filter(RoadmapHistory.user_id == current_user.id)\
+        .all()
 
-    histories_out = [RoadmapHistoryOut.from_orm(h) for h in histories]
+    # Include roadmap title/description in output
+    histories_out = []
+    for h in histories:
+        h_out = RoadmapHistoryOut.from_orm(h)
+        h_out.roadmap_title = h.roadmap.title
+        h_out.roadmap_description = h.roadmap.description
+        histories_out.append(h_out)
+
     return APIResponse(success=True, data=histories_out)
 
 
+# ------------------ GET ONE ------------------
 @router.get("/{history_id}", response_model=APIResponse[RoadmapHistoryOut])
 async def get_history(
     history_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    history = db.query(RoadmapHistory).filter(
-        RoadmapHistory.id == history_id,
-        RoadmapHistory.user_id == current_user.id
-    ).first()
+    history = db.query(RoadmapHistory)\
+        .options(joinedload(RoadmapHistory.roadmap))\
+        .filter(
+            RoadmapHistory.id == history_id,
+            RoadmapHistory.user_id == current_user.id
+        ).first()
 
     if not history:
         raise HTTPException(status_code=404, detail="History not found")
 
     history_out = RoadmapHistoryOut.from_orm(history)
+    history_out.roadmap_title = history.roadmap.title
+    history_out.roadmap_description = history.roadmap.description
     return APIResponse(success=True, data=history_out)
 
 

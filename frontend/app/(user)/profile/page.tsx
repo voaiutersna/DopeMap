@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "../layout";
-import { create } from "domain";
+import { getRoadmaps } from "../roadmap-api";
+import { getHistory } from "../history-api";
 
 type Roadmap = {
   id: string;
@@ -12,95 +13,57 @@ type Roadmap = {
   createdAt: string;
 };
 
-const makeId = (n = 6) =>
-  Math.random().toString(36).substring(2, 2 + n) + Date.now().toString(36).slice(-3);
+type HistoryItem = {
+  id: string;
+  roadmap_id: string;
+  roadmap_title: string;
+  roadmap_description: string;
+  enrolled_at: string;
+  task_history: Record<string, any>;
+};
 
 export default function ProfilePage() {
   const { me, loading } = useUser();
-   if (loading) return <div>Loading...</div>;
-  const [roadmaps, setRoadmaps] = useState<Roadmap[]>([
-    {
-      id: makeId(),
-      title: "Frontend Fundamentals",
-      description: "Learn HTML, CSS, and JS from scratch.",
-      authorId: 1,
-      enrolled: false,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: makeId(),
-      title: "React Deep Dive",
-      description: "Hooks, context, and advanced patterns.",
-      authorId: 2,
-      enrolled: true,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: makeId(),
-      title: "Backend Basics",
-      description: "APIs, databases, and authentication.",
-      authorId: 1,
-      enrolled: true,
-      createdAt: new Date().toISOString(),
-    },
-  ]);
+  const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
 
-  const [editing, setEditing] = useState<Roadmap | null>(null);
-  // const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  // Fetch roadmaps and history from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const roadmapData = await getRoadmaps();
+        const historyData = await getHistory();
+        setRoadmaps(roadmapData);
+        setHistory(historyData);
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setLoadingData(false);
+      }
+    };
 
-  // const yourRoadmaps = roadmaps.filter((r) => r.authorId === me.id);
-  // const enrolledRoadmaps = roadmaps.filter((r) => r.enrolled && r.authorId !== me.id);
+    if (!loading) fetchData();
+  }, [loading]);
 
+  if (loading || loadingData) return <div>Loading...</div>;
+
+  // Create a new roadmap (temporary UI state only)
   function createRoadmap() {
     const newRoadmap: Roadmap = {
-      id: makeId(),
+      id: `temp-${Date.now()}`,
       title: "New Roadmap",
       description: "Describe this roadmap...",
       enrolled: false,
+      authorId: me.id,
       createdAt: new Date().toISOString(),
     };
     setRoadmaps((prev) => [newRoadmap, ...prev]);
-    setEditing(newRoadmap);
   }
-
-  // function toggleEnroll(id: string) {
-  //   setRoadmaps((prev) => prev.map((r) => (r.id === id ? { ...r, enrolled: !r.enrolled } : r)));
-  // }
-
-  // function startEdit(r: Roadmap) {
-  //   setEditing({ ...r });
-  // }
-
-  // function saveEdit() {
-  //   if (!editing) return;
-  //   setRoadmaps((prev) => prev.map((r) => (r.id === editing.id ? editing : r)));
-  //   setEditing(null);
-  // }
-
-  // function cancelEdit() {
-  //   setEditing(null);
-  //   setConfirmDeleteId(null);
-  // }
-
-  // function requestDelete(id: string) {
-  //   setConfirmDeleteId(id);
-  // }
-
-  // function confirmDelete() {
-  //   if (!confirmDeleteId) return;
-  //   setRoadmaps((prev) => prev.filter((r) => r.id !== confirmDeleteId));
-  //   setConfirmDeleteId(null);
-  //   if (editing?.id === confirmDeleteId) setEditing(null);
-  // }
-
-  // function doIt(id: string) {
-  //   const roadmap = roadmaps.find((r) => r.id === id);
-  //   if (roadmap) alert(`Starting roadmap: ${roadmap.title}`);
-  // }
 
   return (
     <div className="bg-[#2f3131] flex flex-col items-center min-h-[calc(100vh-56px)] font-mono text-zinc-200">
-      <div className="container  w-full flex flex-col py-12 space-y-8">
+      <div className="container w-full flex flex-col py-12 space-y-8">
         {/* --- USER INFO --- */}
         <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
           <div className="flex items-center justify-between mb-3">
@@ -125,15 +88,14 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* --- YOUR ROADMAPS --- */}
-        {/* <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
+        {/* --- USER ROADMAPS --- */}
+        <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">🧭 Your Roadmaps</h2>
-
-          {yourRoadmaps.length === 0 ? (
+          {roadmaps.length === 0 ? (
             <div className="text-zinc-400">You haven’t created any roadmaps yet.</div>
           ) : (
             <div className="space-y-3">
-              {yourRoadmaps.map((r) => (
+              {roadmaps.map((r) => (
                 <div
                   key={r.id}
                   className="flex flex-col md:flex-row md:items-center justify-between bg-zinc-900/30 rounded-md p-3 gap-3"
@@ -145,135 +107,35 @@ export default function ProfilePage() {
                       Created: {new Date(r.createdAt).toLocaleDateString()}
                     </div>
                   </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => startEdit(r)}
-                      className="px-3 py-1 border border-blue-500 text-blue-300 rounded-md hover:bg-blue-500/10"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => requestDelete(r.id)}
-                      className="px-3 py-1 border border-red-500 text-red-300 rounded-md hover:bg-red-500/10"
-                    >
-                      Delete
-                    </button>
-                  </div>
                 </div>
               ))}
             </div>
           )}
-        </section> */}
+        </section>
 
-        {/* --- ENROLLED ROADMAPS --- */}
-        {/* <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4">📚 Enrolled Roadmaps</h2>
-
-          {enrolledRoadmaps.length === 0 ? (
-            <div className="text-zinc-400">You are not enrolled in any roadmaps.</div>
+        {/* --- HISTORY --- */}
+        <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
+          <h2 className="text-xl font-semibold mb-4">📜 Your Roadmap History</h2>
+          {history == null ? (
+            <div className="text-zinc-400">No history yet.</div>
           ) : (
             <div className="space-y-3">
-              {enrolledRoadmaps.map((r) => (
+              {history.map((h) => (
                 <div
-                  key={r.id}
-                  className="flex flex-col md:flex-row md:items-center justify-between bg-zinc-900/30 rounded-md p-3 gap-3"
+                  key={h.id}
+                  className="bg-zinc-900/30 rounded-md p-3"
                 >
-                  <div>
-                    <div className="font-medium">{r.title}</div>
-                    <div className="text-sm text-zinc-400">{r.description}</div>
-                    <div className="text-xs text-zinc-500 mt-1">
-                      By author #{r.authorId}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => doIt(r.id)}
-                      className="px-3 py-1 border border-blue-500 text-blue-300 rounded-md hover:bg-blue-500/10"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => toggleEnroll(r.id)}
-                      className="px-3 py-1 border border-red-500 text-red-300 rounded-md hover:bg-red-500/10"
-                    >
-                      Unenroll
-                    </button>
+                  <div className="font-medium">{h.roadmap_title}</div>
+                  <div className="text-sm text-zinc-400">{h.roadmap_description}</div>
+                  <div className="text-xs text-zinc-500 mt-1">
+                    Enrolled at: {new Date(h.enrolled_at).toLocaleDateString()}
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </section> */}
+        </section>
       </div>
-
-      {/* --- EDIT MODAL --- */}
-      {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60"  />
-          <div className="relative bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-lg z-10">
-            <h3 className="text-lg font-semibold mb-3">Edit Roadmap</h3>
-            <label className="flex flex-col mb-3">
-              <span className="text-sm text-zinc-400 mb-1">Title</span>
-              <input
-                value={editing.title}
-                onChange={(e) => setEditing({ ...editing, title: e.target.value })}
-                className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2"
-              />
-            </label>
-            <label className="flex flex-col mb-4">
-              <span className="text-sm text-zinc-400 mb-1">Description</span>
-              <textarea
-                value={editing.description}
-                onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-                className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 h-24"
-              />
-            </label>
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-3 py-2 border border-zinc-600 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                className="px-3 py-2 border border-blue-500 text-blue-300 rounded-md"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* --- DELETE CONFIRM --- */}
-      {/* {confirmDeleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setConfirmDeleteId(null)} />
-          <div className="relative bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-md z-10">
-            <h3 className="text-lg font-semibold mb-3 text-red-300">
-              Confirm Delete
-            </h3>
-            <p className="text-sm text-zinc-400 mb-4">
-              Are you sure you want to delete this roadmap? This cannot be undone.
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setConfirmDeleteId(null)}
-                className="px-3 py-2 border border-zinc-600 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-3 py-2 border border-red-500 text-red-300 rounded-md"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }
