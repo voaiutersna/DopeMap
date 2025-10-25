@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "../layout";
 import { getRoadmaps } from "../roadmap-api";
 import { getHistory } from "../history-api";
+import Link from "next/link";
+import { api } from "@/api";
 
 type Roadmap = {
   id: string;
@@ -61,6 +63,21 @@ export default function ProfilePage() {
     setRoadmaps((prev) => [newRoadmap, ...prev]);
   }
 
+  const unEnrollRoadmap = async (id: string) => {
+    try {
+      await api.delete(`/history/${id}`);
+
+      // Remove from frontend state
+      setHistory((prev) => prev.filter((h) => h.id !== id));
+      alert("Successfully unenrolled from roadmap!");
+    } catch (err: any) {
+      console.error("Unenroll failed:", err);
+      const message = err.response?.data?.detail || "Failed to unenroll";
+      alert(message);
+    }
+  };
+
+
   return (
     <div className="bg-[#2f3131] flex flex-col items-center min-h-[calc(100vh-56px)] font-mono text-zinc-200">
       <div className="container w-full flex flex-col py-12 space-y-8">
@@ -118,22 +135,39 @@ export default function ProfilePage() {
           <h2 className="text-xl font-semibold mb-4">📜 Your Roadmap History</h2>
           {history == null ? (
             <div className="text-zinc-400">No history yet.</div>
-          ) : (
-            <div className="space-y-3">
-              {history.map((h) => (
-                <div
-                  key={h.id}
-                  className="bg-zinc-900/30 rounded-md p-3"
-                >
-                  <div className="font-medium">{h.roadmap_title}</div>
-                  <div className="text-sm text-zinc-400">{h.roadmap_description}</div>
-                  <div className="text-xs text-zinc-500 mt-1">
-                    Enrolled at: {new Date(h.enrolled_at).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
+          ) :  (
+    <div className="space-y-3">
+      {history.map((h) => (
+        <div
+          key={h.id}
+          className="bg-zinc-900/30 rounded-md p-3 flex flex-col md:flex-row md:items-center justify-between gap-3"
+        >
+          <div className="flex-1">
+            <div className="font-medium">{h.roadmap_title}</div>
+            <div className="text-sm text-zinc-400">{h.roadmap_description}</div>
+            <div className="text-xs text-zinc-500 mt-1">
+              Enrolled at: {new Date(h.enrolled_at).toLocaleDateString()}
             </div>
-          )}
+          </div>
+
+          <div className="flex gap-2">
+            <Link
+              href={`/view/${h.roadmap_id}`}
+              className="px-3 py-1 border border-blue-500 text-blue-300 rounded-md hover:bg-blue-500/10"
+            >
+              View
+            </Link>
+            <button
+              onClick={() => {unEnrollRoadmap(h.id)}}
+              className="px-3 py-1 border border-red-500 text-red-300 rounded-md hover:bg-red-500/10"
+            >
+              Unenroll
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
         </section>
       </div>
     </div>

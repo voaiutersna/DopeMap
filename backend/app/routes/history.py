@@ -55,7 +55,6 @@ async def get_all_histories(
     return APIResponse(success=True, data=histories_out)
 
 
-# ------------------ GET ONE ------------------
 @router.get("/{history_id}", response_model=APIResponse[RoadmapHistoryOut])
 async def get_history(
     history_id: UUID,
