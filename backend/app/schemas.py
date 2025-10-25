@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from jose import jwt, JWTError
 from fastapi.middleware.cors import CORSMiddleware
+from uuid import UUID
 
 # Pydantic models
 
@@ -22,7 +23,7 @@ class UserLogin(BaseModel):
     password: str
 
 class UserResponse(BaseModel):
-    id: str
+    id: UUID
     name: str
     email: str
     created_at: datetime
