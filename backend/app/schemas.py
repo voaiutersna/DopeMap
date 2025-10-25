@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import Generic, TypeVar, Union, Optional
+from typing import Dict, Generic, TypeVar, Union, Optional
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import create_engine, text, Column, Integer, String, Float, DateTime
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
@@ -43,3 +43,29 @@ class APIResponse(BaseModel, Generic[T]):
     data: Optional[T] = None
     error: Optional[str] = None
 
+
+class TaskStatus(BaseModel):
+    isdone: bool = False
+    isStar: bool = False
+
+# ใช้ทุกอัน
+class RoadmapHistoryBase(BaseModel):
+    roadmap_id: UUID
+    task_history: Dict[str, Dict[str, TaskStatus]] = {}
+
+# ไว้สร้าง
+class RoadmapHistoryCreate(RoadmapHistoryBase):
+    pass
+
+# ไว้ ีupdate
+class RoadmapHistoryUpdate(BaseModel):
+    task_history: Dict[str, Dict[str, TaskStatus]]
+
+# ไว้ return
+class RoadmapHistoryOut(RoadmapHistoryBase):
+    id: UUID
+    user_id: UUID
+    enrolled_at: datetime
+
+    class Config:
+        from_attributes = True

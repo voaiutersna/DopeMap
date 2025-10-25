@@ -15,6 +15,7 @@ from app.routes.me import router as me_router
 from app.routes.protected import router as protected_router
 from app.routes.get_users import router as users_router
 from app.routes.get_user_by_id import router as user_router
+from app.routes.history import router as history_router
 from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, CORS_ORIGINS
 
 security = HTTPBearer()
@@ -40,3 +41,4 @@ app.include_router(me_router)
 app.include_router(protected_router)
 app.include_router(users_router)
 app.include_router(user_router)
+app.include_router(history_router)
