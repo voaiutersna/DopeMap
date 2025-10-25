@@ -6,10 +6,11 @@ from ..utils.password_tools import verify_password
 from ..utils.jwt_tools import create_access_token
 from ..settings import ACCESS_TOKEN_EXPIRE_MINUTES
 from ..schemas import UserLogin
+from ..schemas import UserLogin, APIResponse, Token
 
 router = APIRouter(tags=["Auth"])
 
-@router.post("/login")
+@router.post("/login",response_model=APIResponse)
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     user = get_user_by_email(db, email=user_credentials.email)
     if not user or not verify_password(user_credentials.password, user.hashed_password):
@@ -23,4 +24,7 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
         data={"sub": user.email},
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
-    return {"access_token": token, "token_type": "bearer", "user": user}
+    return APIResponse[Token](
+        success=True,
+        data=Token(access_token=token, token_type="bearer", user=user),
+    )

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TextNodeData } from "../test/type";
+import { TextNodeData } from "../type";
 import { Node } from "@xyflow/react";
 
 export default function TextNode({ data , nodes , onNodeDataChange }: { data: TextNodeData ,nodes? : Node, onNodeDataChange?: () => void }) {

@@ -4,8 +4,8 @@ import LinkEditor from './LinkEditor'
 import TextEditor from './TextEditor'
 import NoteEditor from './NoteEditor'
 import TaskEditor from './TaskEditor'
-import { NodeType } from '../test/type'
-import { CustomNode } from '../test/type'
+import { NodeType } from '../type'
+import { CustomNode } from '../type'
 
 const nodeTypesMap: Record<NodeType, React.FC<{ onClose: () => void }>> = {
   note: NoteEditor,

@@ -3,7 +3,7 @@ import { useReactFlow } from "@xyflow/react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import { X, PlusCircle, Trash2 } from "lucide-react";
-import type { CustomNode, Task } from "../test/type";
+import type { CustomNode, Task } from "../type";
 import DifficultyDropdown from "./DifficultyDropdown";
 import { v4 as uuidv4 } from 'uuid';
 

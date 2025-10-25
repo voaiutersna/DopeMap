@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { X } from "lucide-react";
-import type { CustomNode } from "../test/type";
+import type { CustomNode } from "../type";
 
 type TextEditorProps = {
   onClose: () => void;

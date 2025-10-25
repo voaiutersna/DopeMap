@@ -1,5 +1,5 @@
 import React from "react";
-import { LinkNodeData } from "../test/type";
+import { LinkNodeData } from "../type";
 import { Link } from "lucide-react";
 import { Position, Handle } from '@xyflow/react';
 

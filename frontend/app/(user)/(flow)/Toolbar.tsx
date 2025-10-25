@@ -102,7 +102,6 @@ export default function Toolbar() {
         </button>
       </div>
 
-      {/* Hidden file input for JSON import */}
       <input
         type="file"
         accept="application/json"

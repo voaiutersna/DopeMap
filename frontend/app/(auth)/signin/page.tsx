@@ -2,40 +2,72 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { api, APIResponse } from "@/api";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import { Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setLoading(true);
 
+    const toastId = toast.info("🔄 Logging in...");
     try {
-      const response = await api.post<APIResponse<{ access_token: string }>>(
-        "/login",
-        { email, password }
-      );
-
-      console.log(response);
+      const response = await api.post<
+        APIResponse<{ access_token: string }>
+      >("/login", { email, password });
 
       if (response.data.success) {
         const { access_token } = response.data.data;
         localStorage.setItem("token", access_token);
+
+        toast.update(toastId, {
+          render: "✅ Login successful!",
+          type: "success",
+        })
+
+        router.push("/profile");
       } else {
-        setError(response.data.error || "Login failed");
+
+         toast.update(toastId, {
+          render: response.data.error || "Login failed",
+          type: "error",
+        })
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Login failed");
+      toast.update(toastId, {
+        render: err.response?.data?.detail || "Login failed",
+        type: "error",
+      })
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-[#2f3131] flex flex-col items-center justify-items-center h-[calc(100vh-56px)] font-mono text-zinc-200">
+    <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
+    <div className="bg-[#2f3131] flex flex-col items-center justify-center h-[calc(100vh-56px)] font-mono text-zinc-200">
       <div className="container flex flex-col justify-center items-center h-full space-y-5">
         <h1 className="text-2xl font-semibold text-start">Sign In</h1>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
@@ -60,9 +92,12 @@ export default function SignInPage() {
 
           <button
             type="submit"
-            className="mt-2 px-4 py-2 border border-blue-500 text-blue-400 rounded-md hover:bg-blue-500/10 hover:scale-105 transition-transform duration-200 cursor-pointer"
+            disabled={loading}
+            className={`mt-2 px-4 py-2 border border-blue-500 text-blue-400 rounded-md hover:bg-blue-500/10 hover:scale-105 transition-transform duration-200 cursor-pointer ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Sign In
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
@@ -77,5 +112,6 @@ export default function SignInPage() {
         </p>
       </div>
     </div>
+    </>
   );
 }

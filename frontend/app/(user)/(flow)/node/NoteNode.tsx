@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Position, Handle } from '@xyflow/react';
-import { NoteNodeData } from '../test/type';
+import { NoteNodeData } from '../type';
 import { Textarea } from '@/components/ui/textarea';
 import { MdPreview } from 'md-editor-rt';
 

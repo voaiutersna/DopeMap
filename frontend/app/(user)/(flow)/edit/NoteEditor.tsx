@@ -3,7 +3,7 @@ import { useReactFlow } from "@xyflow/react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import { X } from "lucide-react";
-import type { CustomNode } from "../test/type";
+import type { CustomNode } from "../type";
 
 type NoteEditorProps = {
   onClose: () => void;

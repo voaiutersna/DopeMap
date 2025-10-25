@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from "react";
 import {
   ReactFlow,
   addEdge,
@@ -20,64 +20,84 @@ import {
   useEdgesState,
   useReactFlow,
   MiniMap,
-} from '@xyflow/react';
+} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import TaskNode from './node/TaskNode';
-import NoteNode from './node/NoteNode';
-import LinkNode from './node/LinkNode';
-import { DnDProvider, useDnD } from './DnDContext';
-import Sidebar from './Sidebar';
-import TextNode from './node/TextNode';
-import NodeWrapper from './node/Nodewrapper';
-import Toolbar from './Toolbar';
-import { v4 as uuidv4 } from 'uuid';
-import Editor from './edit/Editor';
+import TaskNode from "./node/TaskNode";
+import NoteNode from "./node/NoteNode";
+import LinkNode from "./node/LinkNode";
+import { DnDProvider, useDnD } from "./DnDContext";
+import Sidebar from "./Sidebar";
+import TextNode from "./node/TextNode";
+import NodeWrapper from "./node/Nodewrapper";
+import Toolbar from "./Toolbar";
+import { v4 as uuidv4 } from "uuid";
+import Editor from "./edit/Editor";
+import ViewSidebar from "./view/[flowId]/ViewSideBar";
 // import "./index.css"
-
 
 const getId = () => `${uuidv4()}`;
 
-const DnDFlow = () => {
+const DnDFlow = ({ isEdit }: { isEdit?: boolean }) => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [editNodeId, setEditNodeId] = useState<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
-  
+
   const nodeTypes = {
-    note: (props: any) => (
-      <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+    note: (props: any) =>
+      isEdit ? (
+        <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+          <NoteNode {...props} />
+        </NodeWrapper>
+      ) : (
         <NoteNode {...props} />
-      </NodeWrapper>
-    ),
-    task: (props: any) => (
-      <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+      ),
+
+    task: (props: any) =>
+      isEdit ? (
+        <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+          <TaskNode {...props} />
+        </NodeWrapper>
+      ) : (
         <TaskNode {...props} />
-      </NodeWrapper>
-    ),
-    link: (props: any) => (
-      <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+      ),
+
+    link: (props: any) =>
+      isEdit ? (
+        <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+          <LinkNode {...props} />
+        </NodeWrapper>
+      ) : (
         <LinkNode {...props} />
-      </NodeWrapper>
-    ),
-    ctext: (props: any) => (
-      <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+      ),
+
+    ctext: (props: any) =>
+      isEdit ? (
+        <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
+          <TextNode {...props} />
+        </NodeWrapper>
+      ) : (
         <TextNode {...props} />
-      </NodeWrapper>
-    ),
+      ),
   };
 
-  useEffect(() => {
-    console.log("Test")
-  }, [editNodeId])
+  useEffect(() => {}, [editNodeId]);
+
   const [type, setType] = useDnD();
 
-  const onConnect: OnConnect = useCallback((params: Node) => setEdges((eds: Edge) => addEdge(params, eds)), []);
+  const onConnect: OnConnect = useCallback(
+    (params: Node) => setEdges((eds: Edge) => addEdge(params, eds)),
+    []
+  );
 
-  const onDragOver: React.DragEventHandler<HTMLDivElement> = useCallback((event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  }, []);
+  const onDragOver: React.DragEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+    },
+    []
+  );
 
   const onDrop: React.DragEventHandler<HTMLDivElement> = useCallback(
     (event) => {
@@ -95,7 +115,7 @@ const DnDFlow = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      console.log(type)
+      console.log(type);
       const newNode = {
         id: getId(),
         type: type as unknown as string,
@@ -105,38 +125,44 @@ const DnDFlow = () => {
 
       setNodes((nds: Node) => nds.concat(newNode));
     },
-    [screenToFlowPosition, type],
+    [screenToFlowPosition, type]
   );
 
   const onDragStart: React.DragEventHandler<HTMLDivElement> = (event) => {
-    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.effectAllowed = "move";
   };
-
-
 
   return (
     <div className="dndflow flex w-full h-[calc(100vh-56px)]  relative  justify-center">
-      <div className='container absolute top-4 left-0-translate-x-1/2'>
-
-      <Toolbar />
-      </div>
-      <div className="w-full h-full bg-[#2f3131] relative" >
+      {isEdit && (
+        <div className="container absolute top-4 left-0-translate-x-1/2">
+          <Toolbar />
+        </div>
+      )}
+      <div className="w-full h-full bg-[#2f3131] relative">
         <ReactFlow
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onDragStart={onDragStart}
-          onDragOver={onDragOver}
+          onNodesChange={isEdit ? onNodesChange : undefined}
+          onEdgesChange={isEdit ? onEdgesChange : undefined}
+          onConnect={isEdit ? onConnect : undefined}
+          onDrop={isEdit ? onDrop : undefined}
+          onDragStart={isEdit ? onDragStart : undefined}
+          onDragOver={isEdit ? onDragOver : undefined}
           fitView
           defaultEdgeOptions={{ type: "step" }}
           snapToGrid={true}
           snapGrid={[20, 20]}
           minZoom={0.5}
           maxZoom={2}
+          nodesDraggable={isEdit}
+          nodesConnectable={isEdit}
+          elementsSelectable={isEdit}
+          zoomOnScroll={true}
+          zoomOnPinch={true}
+          panOnScroll={true}
+          panOnDrag={true}
         >
           {/* <Controls /> */}
 
@@ -145,54 +171,53 @@ const DnDFlow = () => {
             <MiniMap
               nodeColor={(node) => {
                 switch (node.type) {
-                  case 'note':
-                    return '#f59e0b'; // orange
-                  case 'task':
-                    return '#10b981'; // green
-                  case 'link':
-                    return '#3b82f6'; // blue
-                  case 'ctext':
-                    return '#8b5cf6'; // purple
+                  case "note":
+                    return "#f59e0b"; // orange
+                  case "task":
+                    return "#10b981"; // green
+                  case "link":
+                    return "#3b82f6"; // blue
+                  case "ctext":
+                    return "#8b5cf6"; // purple
                   default:
-                    return '#9ca3af'; // gray for any other type
+                    return "#9ca3af"; // gray for any other type
                 }
               }}
-              nodeStrokeColor={() => '#ffffff'} // white border for visibility
+              nodeStrokeColor={() => "#ffffff"} // white border for visibility
               nodeBorderRadius={4}
             />
           </div>
         </ReactFlow>
-
       </div>
-      <Sidebar />
-    <div
-  className={`fixed inset-0 z-50 transition-all duration-500 ${
-    editNodeId ? "translate-y-0" : "translate-y-full"
-  } flex items-end`}
->
-
-  {/* Editor Panel */}
-  <div className="relative w-full max-h-[100dvh] bg-[#1e1f1f] text-gray-300 border-[#3a3d3f]  shadow-xl overflow-y-auto">
-    {nodes.map(
-      (node) =>
-        node.id === editNodeId && (
-          <Editor
-            key={node.id}
-            editNode={node}
-            setEditNodeId={setEditNodeId}
-          />
-        )
-    )}
-  </div>
-</div>
+      {isEdit ? <Sidebar /> : <ViewSidebar />}
+      {isEdit && (
+        <div
+          className={`fixed inset-0 z-50 transition-all duration-500 ${
+            editNodeId ? "translate-y-0" : "translate-y-full"
+          } flex items-end`}
+        >
+          <div className="relative w-full max-h-[100dvh] bg-[#1e1f1f] text-gray-300 border-[#3a3d3f]  shadow-xl overflow-y-auto">
+            {nodes.map(
+              (node) =>
+                node.id === editNodeId && (
+                  <Editor
+                    key={node.id}
+                    editNode={node}
+                    setEditNodeId={setEditNodeId}
+                  />
+                )
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default () => (
+export default ({ isEdit }: { isEdit?: boolean }) => (
   <ReactFlowProvider>
     <DnDProvider>
-      <DnDFlow />
+      <DnDFlow isEdit={isEdit} />
     </DnDProvider>
   </ReactFlowProvider>
 );

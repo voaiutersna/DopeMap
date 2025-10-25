@@ -13,7 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
-import { Task, TaskNodeData } from "../test/type";
+import { Task, TaskNodeData } from "../type";
 import { Handle, Position } from "@xyflow/react";
 
 export default function TaskNode({ data }: {data : TaskNodeData}) {

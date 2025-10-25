@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import type { LinkNodeData } from '../types'; // adjust path if needed
-import { CustomNode } from '../test/type';
+import { CustomNode } from '../type';
 import { useReactFlow } from '@xyflow/react';
 
 type LinkEditorProps = {
