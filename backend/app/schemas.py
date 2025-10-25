@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import Dict, Generic, TypeVar, Union, Optional
+from typing import Any, Dict, Generic, TypeVar, Union, Optional
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import create_engine, text, Column, Integer, String, Float, DateTime
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
@@ -66,6 +66,29 @@ class RoadmapHistoryOut(RoadmapHistoryBase):
     id: UUID
     user_id: UUID
     enrolled_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class RoadmapBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    roadmap_data: Optional[Any] = None
+    is_public: Optional[bool] = False
+
+
+class RoadmapCreate(RoadmapBase):
+    pass
+
+
+class RoadmapUpdate(RoadmapBase):
+    pass
+
+
+class RoadmapResponse(RoadmapBase):
+    id: UUID
+    owner_id: UUID
+    created_at: datetime
 
     class Config:
         from_attributes = True
