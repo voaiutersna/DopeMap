@@ -9,7 +9,7 @@ from app.schemas import APIResponse, RoadmapHistoryOut, RoadmapHistoryCreate
 from app.models import RoadmapHistory, User
 from app.deps.dependencies import get_db, get_current_user
 
-router = APIRouter(prefix="/roadmap-history", tags=["Roadmap History"])
+router = APIRouter(prefix="/history", tags=["Roadmap History"])
 
 
 @router.post("/", response_model=APIResponse[RoadmapHistoryOut])
