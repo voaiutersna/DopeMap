@@ -33,7 +33,6 @@ export type Task = {
   solutionUrl: string;
 };
 
-// 🎯 CustomNode Type with correct data for each type
 export type CustomNode =
   | (Node & {
       type: "note";

@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { useUser } from "../layout";
+import { create } from "domain";
 
 type Roadmap = {
   id: string;
@@ -14,13 +16,8 @@ const makeId = (n = 6) =>
   Math.random().toString(36).substring(2, 2 + n) + Date.now().toString(36).slice(-3);
 
 export default function ProfilePage() {
-  const [user] = useState({
-    id: 1,
-    name: "Jane Developer",
-    email: "jane@example.com",
-    created_at: new Date().toISOString(),
-  });
-
+  const { me, loading } = useUser();
+   if (loading) return <div>Loading...</div>;
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([
     {
       id: makeId(),
@@ -49,17 +46,16 @@ export default function ProfilePage() {
   ]);
 
   const [editing, setEditing] = useState<Roadmap | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  // const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  const yourRoadmaps = roadmaps.filter((r) => r.authorId === user.id);
-  const enrolledRoadmaps = roadmaps.filter((r) => r.enrolled && r.authorId !== user.id);
+  // const yourRoadmaps = roadmaps.filter((r) => r.authorId === me.id);
+  // const enrolledRoadmaps = roadmaps.filter((r) => r.enrolled && r.authorId !== me.id);
 
   function createRoadmap() {
     const newRoadmap: Roadmap = {
       id: makeId(),
       title: "New Roadmap",
       description: "Describe this roadmap...",
-      authorId: user.id,
       enrolled: false,
       createdAt: new Date().toISOString(),
     };
@@ -67,40 +63,40 @@ export default function ProfilePage() {
     setEditing(newRoadmap);
   }
 
-  function toggleEnroll(id: string) {
-    setRoadmaps((prev) => prev.map((r) => (r.id === id ? { ...r, enrolled: !r.enrolled } : r)));
-  }
+  // function toggleEnroll(id: string) {
+  //   setRoadmaps((prev) => prev.map((r) => (r.id === id ? { ...r, enrolled: !r.enrolled } : r)));
+  // }
 
-  function startEdit(r: Roadmap) {
-    setEditing({ ...r });
-  }
+  // function startEdit(r: Roadmap) {
+  //   setEditing({ ...r });
+  // }
 
-  function saveEdit() {
-    if (!editing) return;
-    setRoadmaps((prev) => prev.map((r) => (r.id === editing.id ? editing : r)));
-    setEditing(null);
-  }
+  // function saveEdit() {
+  //   if (!editing) return;
+  //   setRoadmaps((prev) => prev.map((r) => (r.id === editing.id ? editing : r)));
+  //   setEditing(null);
+  // }
 
-  function cancelEdit() {
-    setEditing(null);
-    setConfirmDeleteId(null);
-  }
+  // function cancelEdit() {
+  //   setEditing(null);
+  //   setConfirmDeleteId(null);
+  // }
 
-  function requestDelete(id: string) {
-    setConfirmDeleteId(id);
-  }
+  // function requestDelete(id: string) {
+  //   setConfirmDeleteId(id);
+  // }
 
-  function confirmDelete() {
-    if (!confirmDeleteId) return;
-    setRoadmaps((prev) => prev.filter((r) => r.id !== confirmDeleteId));
-    setConfirmDeleteId(null);
-    if (editing?.id === confirmDeleteId) setEditing(null);
-  }
+  // function confirmDelete() {
+  //   if (!confirmDeleteId) return;
+  //   setRoadmaps((prev) => prev.filter((r) => r.id !== confirmDeleteId));
+  //   setConfirmDeleteId(null);
+  //   if (editing?.id === confirmDeleteId) setEditing(null);
+  // }
 
-  function doIt(id: string) {
-    const roadmap = roadmaps.find((r) => r.id === id);
-    if (roadmap) alert(`Starting roadmap: ${roadmap.title}`);
-  }
+  // function doIt(id: string) {
+  //   const roadmap = roadmaps.find((r) => r.id === id);
+  //   if (roadmap) alert(`Starting roadmap: ${roadmap.title}`);
+  // }
 
   return (
     <div className="bg-[#2f3131] flex flex-col items-center min-h-[calc(100vh-56px)] font-mono text-zinc-200">
@@ -110,14 +106,14 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-2xl font-semibold">Profile</h1>
             <div className="text-sm text-zinc-400">
-              Member since {new Date(user.created_at).toLocaleDateString()}
+              Member since {new Date(me?.created_at).toLocaleDateString()}
             </div>
           </div>
 
           <div className="flex justify-between items-center">
             <div>
-              <div className="text-lg font-medium">{user.name}</div>
-              <div className="text-sm text-zinc-400">{user.email}</div>
+              <div className="text-lg font-medium">{me.name}</div>
+              <div className="text-sm text-zinc-400">{me.email}</div>
             </div>
 
             <button
@@ -130,7 +126,7 @@ export default function ProfilePage() {
         </section>
 
         {/* --- YOUR ROADMAPS --- */}
-        <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
+        {/* <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">🧭 Your Roadmaps</h2>
 
           {yourRoadmaps.length === 0 ? (
@@ -168,10 +164,10 @@ export default function ProfilePage() {
               ))}
             </div>
           )}
-        </section>
+        </section> */}
 
         {/* --- ENROLLED ROADMAPS --- */}
-        <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
+        {/* <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">📚 Enrolled Roadmaps</h2>
 
           {enrolledRoadmaps.length === 0 ? (
@@ -209,13 +205,13 @@ export default function ProfilePage() {
               ))}
             </div>
           )}
-        </section>
+        </section> */}
       </div>
 
       {/* --- EDIT MODAL --- */}
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60" onClick={cancelEdit} />
+          <div className="absolute inset-0 bg-black/60"  />
           <div className="relative bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-lg z-10">
             <h3 className="text-lg font-semibold mb-3">Edit Roadmap</h3>
             <label className="flex flex-col mb-3">
@@ -236,13 +232,11 @@ export default function ProfilePage() {
             </label>
             <div className="flex justify-end gap-2">
               <button
-                onClick={cancelEdit}
                 className="px-3 py-2 border border-zinc-600 rounded-md"
               >
                 Cancel
               </button>
               <button
-                onClick={saveEdit}
                 className="px-3 py-2 border border-blue-500 text-blue-300 rounded-md"
               >
                 Save
@@ -253,7 +247,7 @@ export default function ProfilePage() {
       )}
 
       {/* --- DELETE CONFIRM --- */}
-      {confirmDeleteId && (
+      {/* {confirmDeleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60" onClick={() => setConfirmDeleteId(null)} />
           <div className="relative bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-md z-10">
@@ -279,7 +273,7 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
