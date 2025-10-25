@@ -30,7 +30,6 @@ export default function RegisterPage() {
         toast.update(toastId, {
           render: "✅ Registration successful!",
           type: "success",
-          theme: "light",
         });
 
         setTimeout(() => router.push("/profile"), 2000);
@@ -38,17 +37,12 @@ export default function RegisterPage() {
         toast.update(toastId, {
           render: response.data.error || "Registration failed",
           type: "error",
-          isLoading: false,
-          theme: "light",
         });
       }
     } catch (err: any) {
-      // Update toast to error
       toast.update(toastId, {
         render: err.response?.data?.detail || "Registration failed",
         type: "error",
-        isLoading: false,
-        theme: "light",
       });
     } finally {
       setLoading(false);
