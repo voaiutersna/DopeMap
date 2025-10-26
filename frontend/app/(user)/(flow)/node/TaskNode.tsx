@@ -57,7 +57,7 @@ export default function TaskNode({ data }: {data : TaskNodeData}) {
       </div>
 
       {/* Sheet for editing tasks */}
-    <TaskSheet data={data}/>
+    <TaskSheet data={data} />
 
       <div className="overflow-hidden w-full h-full absolute top-0 pointer-events-none">
         <Handle type="source" position={Position.Top} className="!w-3 !h-3 !bg-[#4b4f51]/50 !border-transparent !rounded-full" />

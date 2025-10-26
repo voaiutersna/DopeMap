@@ -1,6 +1,5 @@
 
 import type { NoteNodeData, TextNodeData, TaskNodeData, LinkNodeData, Task } from "./type";
-import { v4 as uuidv4 } from "uuid";
 
 export const defaultNoteNodeData: NoteNodeData = {
   label: "Note Here",

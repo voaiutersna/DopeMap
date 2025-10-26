@@ -3,37 +3,32 @@ import { useState, useEffect } from "react";
 import { getRoadmaps } from "../roadmap-api";
 import { getHistory } from "../history-api";
 import { api } from "@/api";
-
-type MapItem = {
-  id: string;
-  title: string;
-  description: string;
-  author: string;
-  createdAt: string;
-  enrolled: boolean;
-};
+import { Roadmap, HistoryType } from "../type"; 
 
 export default function MapsPage() {
   const [search, setSearch] = useState("");
-  const [maps, setMaps] = useState<MapItem[]>([]);
+  const [maps, setMaps] = useState<Roadmap[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const roadmaps = await getRoadmaps();
-      const history = await getHistory();
-      console.log(roadmaps,history);
+      try {
+        const roadmaps = await getRoadmaps();
+        const history: HistoryType[] = await getHistory();
 
-      if (roadmaps) {
-        // Map each roadmap and check if it's in history
-        const mapped: MapItem[] = roadmaps.map((map: any) => ({
-          ...map,
-          enrolled: !!history?.find((h: any) => h.roadmap_id === map.id),
-        }));
-        setMaps(mapped);
+        if (roadmaps && Array.isArray(roadmaps)) {
+          const mapped: Roadmap[] = roadmaps.map((map: Roadmap) => ({
+            ...map,
+            enrolled: !!history?.find((h) => h.roadmap_id === map.id),
+          }));
+          setMaps(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to load maps:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
   }, []);
@@ -56,17 +51,18 @@ export default function MapsPage() {
         console.error("Failed to enroll:", e);
       }
     } else {
-      // Unenroll → delete history
       try {
-        const history = await getHistory();
-        const record = history?.find((h: any) => h.roadmap_id === mapId);
+        const history: HistoryType[] = await getHistory();
+        const record = history?.find((h) => h.roadmap_id === mapId);
         if (record) {
-          await api.delete(`/history/${record.id}`);
-          setMaps((prev) =>
-            prev.map((m) =>
-              m.id === mapId ? { ...m, enrolled: false } : m
-            )
-          );
+          const res = await api.delete(`/history/${record.id}`);
+          if (res.data.success) {
+            setMaps((prev) =>
+              prev.map((m) =>
+                m.id === mapId ? { ...m, enrolled: false } : m
+              )
+            );
+          }
         }
       } catch (e) {
         console.error("Failed to unenroll:", e);
@@ -93,6 +89,7 @@ export default function MapsPage() {
           />
         </div>
 
+        {/* Maps Grid */}
         {loading ? (
           <div className="text-gray-400 text-center">Loading...</div>
         ) : filteredMaps.length === 0 ? (
@@ -108,7 +105,7 @@ export default function MapsPage() {
                   <h2 className="text-lg font-semibold mb-2">{map.title}</h2>
                   <p className="text-sm text-zinc-400 mb-3">{map.description}</p>
                   <div className="text-xs text-zinc-500">
-                    metaID : <span className="text-zinc-300">{map.id}</span>
+                    metaID: <span className="text-zinc-300">{map.id}</span>
                   </div>
                 </div>
 

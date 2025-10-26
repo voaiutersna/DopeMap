@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { ZoomIn, ZoomOut, Maximize2, Trash2, Save, Upload, Database } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
-import axios from 'axios';
 import { api } from '@/api';
 
 interface ToolbarProps {
