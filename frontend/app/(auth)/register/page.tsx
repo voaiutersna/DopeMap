@@ -1,16 +1,14 @@
 "use client";
 import React, { useState } from "react";
 import { api, APIResponse } from "@/api";
-import { useRouter } from "next/navigation";
-import { ToastContainer, toast, Bounce } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import Toaster from "@/components/Toaster";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,20 +51,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
-
+     <Toaster/>
       <div className="bg-[#2f3131] flex flex-col items-center justify-center h-[calc(100vh-56px)] font-mono text-zinc-200">
         <div className="container flex flex-col justify-center items-center h-full space-y-5">
           <h1 className="text-2xl font-semibold text-start">Register</h1>

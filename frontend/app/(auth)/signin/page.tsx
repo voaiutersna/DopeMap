@@ -2,16 +2,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { api, APIResponse } from "@/api";
-import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
-import { Bounce } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import Toaster from "@/components/Toaster";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +29,7 @@ export default function SignInPage() {
           type: "success",
         })
 
+        // ต่างกันตรงที่ window.location.href จะ render ใหม่ทำให้ได้ getMe เเล้ว
         // router.push("/profile");
         window.location.href = "/profile";
       } else {
@@ -53,19 +51,7 @@ export default function SignInPage() {
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={true}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
+      <Toaster/>
     <div className="bg-[#2f3131] flex flex-col items-center justify-center h-[calc(100vh-56px)] font-mono text-zinc-200">
       <div className="container flex flex-col justify-center items-center h-full space-y-5">
         <h1 className="text-2xl font-semibold text-start">Sign In</h1>

@@ -1,23 +1,25 @@
 import { api } from "@/api";
 import { APIResponse } from "@/api";
+import { HistoryType } from "./type";
+
 
 export const getHistory = async () => {
     try {
-        const res = await api.get<APIResponse<any[]>>("/history")
+        const res = await api.get<APIResponse<HistoryType[]>>("/history")
         if (res.data.success) {
             return res.data.data
         } else {
-            return null
+            return []
         }
     } catch (e) {
         console.log("error:", e)
-        return null
+        return []
     }
 }
 
 export const getHistoryById = async (historyId: string) => {
     try {
-        const res = await api.get<APIResponse<any>>(`/history/${historyId}`)
+        const res = await api.get<APIResponse<HistoryType>>(`/history/${historyId}`)
         if (res.data.success) {
             return res.data.data
         } else {

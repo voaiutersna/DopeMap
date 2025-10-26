@@ -1,23 +1,24 @@
 import { api } from "@/api";
 import { APIResponse } from "@/api";
+import { Roadmap } from "./type";
 
 export const getRoadmaps = async () => {
     try {
-        const res = await api.get<APIResponse<any[]>>("/roadmaps")
+        const res = await api.get<APIResponse<Roadmap[]>>("/roadmaps")
         if (res.data.success) {
             return res.data.data
         } else {
-            return null
+            return []
         }
     } catch (e) {
         console.log("error:", e)
-        return null
+        return []
     }
 }
 
 export const getRoadmapById = async (roadmapId: string) => {
     try {
-        const res = await api.get<APIResponse<any>>(`/roadmaps/${roadmapId}`)
+        const res = await api.get<APIResponse<Roadmap>>(`/roadmaps/${roadmapId}`)
         if (res.data.success) {
             return res.data.data
         } else {
