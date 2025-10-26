@@ -27,11 +27,9 @@ type TaskHistory = {
 export default function TaskSheet({
   data,
   history,
-  isView = false,
 }: {
   data: TaskNodeData;
   history?: TaskHistory;
-  isView: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -47,7 +45,6 @@ export default function TaskSheet({
   });
 
   const toggleDone = (taskId: string) => {
-    if (!isView) return;
     setTaskHistory((prev) => ({
       ...prev,
       [taskId]: { ...prev[taskId], isdone: !prev[taskId].isdone },
@@ -55,7 +52,6 @@ export default function TaskSheet({
   };
 
   const toggleStar = (taskId: string) => {
-    if (!isView) return;
     setTaskHistory((prev) => ({
       ...prev,
       [taskId]: { ...prev[taskId], isStar: !prev[taskId].isStar },
