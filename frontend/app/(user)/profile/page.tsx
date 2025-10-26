@@ -113,7 +113,7 @@ export default function ProfilePage() {
   const unEnrollRoadmap = async (id: string) => {
     if (!confirm("Are you sure you want to unenroll?")) return;
     try {
-      const res = await api.delete(`/roadmap-history/${id}`);
+      const res = await api.delete(`/history/${id}`);
       if (res.data.success) {
         setHistory((prev) => prev.filter((h) => h.id !== id));
       }

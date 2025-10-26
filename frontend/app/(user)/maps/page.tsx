@@ -1,57 +1,83 @@
 "use client";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { getRoadmaps } from "../roadmap-api";
+import { getHistory } from "../history-api";
+import { api } from "@/api";
 
 type MapItem = {
   id: string;
   title: string;
   description: string;
   author: string;
-  enrolled: boolean;
   createdAt: string;
+  enrolled: boolean;
 };
 
 export default function MapsPage() {
   const [search, setSearch] = useState("");
+  const [maps, setMaps] = useState<MapItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // 🧩 Fake data
-  const [maps, setMaps] = useState<MapItem[]>([
-    {
-      id: "1",
-      title: "Frontend Fundamentals",
-      description: "Learn HTML, CSS, and JavaScript basics.",
-      author: "Jane Developer",
-      enrolled: false,
-      createdAt: "2024-09-12",
-    },
-    {
-      id: "2",
-      title: "React Advanced Guide",
-      description: "Hooks, Context API, and performance optimization.",
-      author: "John Coder",
-      enrolled: true,
-      createdAt: "2024-10-01",
-    },
-    {
-      id: "3",
-      title: "Backend API Design",
-      description: "Learn to build and secure RESTful APIs.",
-      author: "Sam Engineer",
-      enrolled: false,
-      createdAt: "2024-08-20",
-    },
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const roadmaps = await getRoadmaps();
+      const history = await getHistory();
+      console.log(roadmaps,history);
+
+      if (roadmaps) {
+        // Map each roadmap and check if it's in history
+        const mapped: MapItem[] = roadmaps.map((map: any) => ({
+          ...map,
+          enrolled: !!history?.find((h: any) => h.roadmap_id === map.id),
+        }));
+        setMaps(mapped);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  const toggleEnroll = async (mapId: string) => {
+    const map = maps.find((m) => m.id === mapId);
+    if (!map) return;
+
+    if (!map.enrolled) {
+      // Enroll → create history
+      try {
+        const res = await api.post("/history", { roadmap_id: mapId });
+        if (res.data.success) {
+          setMaps((prev) =>
+            prev.map((m) =>
+              m.id === mapId ? { ...m, enrolled: true } : m
+            )
+          );
+        }
+      } catch (e) {
+        console.error("Failed to enroll:", e);
+      }
+    } else {
+      // Unenroll → delete history
+      try {
+        const history = await getHistory();
+        const record = history?.find((h: any) => h.roadmap_id === mapId);
+        if (record) {
+          await api.delete(`/history/${record.id}`);
+          setMaps((prev) =>
+            prev.map((m) =>
+              m.id === mapId ? { ...m, enrolled: false } : m
+            )
+          );
+        }
+      } catch (e) {
+        console.error("Failed to unenroll:", e);
+      }
+    }
+  };
 
   const filteredMaps = maps.filter((map) =>
     map.title.toLowerCase().includes(search.toLowerCase())
   );
-
-  const toggleEnroll = (id: string) => {
-    setMaps((prev) =>
-      prev.map((m) =>
-        m.id === id ? { ...m, enrolled: !m.enrolled } : m
-      )
-    );
-  };
 
   return (
     <div className="bg-[#2f3131] min-h-[calc(100vh-56px)] text-zinc-200 font-mono flex flex-col items-center">
@@ -68,8 +94,9 @@ export default function MapsPage() {
           />
         </div>
 
-        {/* Map list */}
-        {filteredMaps.length === 0 ? (
+        {loading ? (
+          <div className="text-gray-400 text-center">Loading...</div>
+        ) : filteredMaps.length === 0 ? (
           <div className="text-zinc-400 text-center">No maps found.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -87,7 +114,6 @@ export default function MapsPage() {
                 </div>
 
                 <div className="flex justify-between mt-4">
-
                   <button
                     onClick={() => toggleEnroll(map.id)}
                     className={`px-3 py-1 border rounded-md transition ${
