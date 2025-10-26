@@ -5,7 +5,7 @@ import "md-editor-rt/lib/style.css";
 import { X, PlusCircle, Trash2 } from "lucide-react";
 import type { CustomNode, Task } from "../type";
 import DifficultyDropdown from "./DifficultyDropdown";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 type TaskEditorProps = {
   onClose: () => void;
@@ -15,12 +15,16 @@ type TaskEditorProps = {
 export default function TaskEditor({ onClose, node }: TaskEditorProps) {
   const { setNodes } = useReactFlow();
 
+  const [mainTitle, setMainTitle] = useState<string>(
+    (node.data as any)?.title || ""
+  );
+
   const initialTasks: Task[] =
     (node.data as any)?.tasks?.length > 0
       ? (node.data as any).tasks
       : [
           {
-            id: uuidv4(), // ✅ Generate UUID
+            id: uuidv4(),
             title: "",
             description: "",
             content: "# Write your task content here...",
@@ -45,7 +49,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
     setTasks((prev) => [
       ...prev,
       {
-        id: uuidv4(), // ✅ Each new task gets a UUID
+        id: uuidv4(),
         title: "",
         description: "",
         content: "# New Task...",
@@ -74,7 +78,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
               ...n,
               data: {
                 ...n.data,
-                title: tasks[0]?.title || "Untitled",
+                title: mainTitle || "Untitled Node",
                 tasks,
               },
             }
@@ -87,19 +91,36 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
   const activeTask = tasks[activeIndex];
 
   return (
-    <div className=" container mx-auto min-h-[100dvh] text-zinc-100 p-6 font-mono flex flex-col gap-6 overflow-y-auto py-12">
+    <div className="container mx-auto min-h-[100dvh] p-6 font-mono flex flex-col gap-6 overflow-y-auto py-12">
+      {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Edit Task Node</h1>
+        <h1 className="text-2xl  tracking-wide">
+          Edit {mainTitle || "Untitled Node"}
+        </h1>
         <X
           className="w-6 h-6 text-red-500/80 cursor-pointer bg-red-900/20 rounded-full p-1 hover:bg-red-900/30 transition"
           onClick={onClose}
         />
       </div>
 
+      {/* Main Node Title Input */}
+      <label className="flex flex-col space-y-3">
+        <span className="text-sm text-gray-500">Main Node Title</span>
+        <input
+          type="text"
+          value={mainTitle}
+          onChange={(e) => setMainTitle(e.target.value)}
+          placeholder="Enter main title for this task node"
+          className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
+        />
+      </label>
+
+      {/* Active Task Editor */}
       {activeTask && (
         <div className="flex flex-col gap-5 mx-auto w-full">
+          {/* Task Title */}
           <label className="flex flex-col space-y-3">
-            <span className="text-sm text-gray-500">Title</span>
+            <span className="text-sm text-gray-500">Task Title</span>
             <input
               type="text"
               value={activeTask.title}
@@ -111,6 +132,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
             />
           </label>
 
+          {/* Description */}
           <label className="flex flex-col space-y-3">
             <span className="text-sm text-gray-500">Description</span>
             <textarea
@@ -123,6 +145,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
             />
           </label>
 
+          {/* URLs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="flex flex-col space-y-3">
               <span className="text-sm text-gray-500">Task URL</span>
@@ -151,6 +174,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
             </label>
           </div>
 
+          {/* Types */}
           <label className="flex flex-col space-y-3">
             <span className="text-sm text-gray-500">Types</span>
             <div className="flex flex-wrap gap-2 border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0">
@@ -197,7 +221,6 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
 
           {/* Difficulty + Score */}
           <div className="flex gap-4">
-            {/* Difficulty */}
             <label className="flex flex-col space-y-3 flex-1">
               <span className="text-sm text-gray-500">Difficulty</span>
               <div className="flex items-center gap-2">
@@ -210,7 +233,6 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
               </div>
             </label>
 
-            {/* Score (1–10) */}
             <label className="flex flex-col space-y-3 w-48">
               <span className="text-sm text-gray-500">Score (1–10)</span>
               <input
@@ -228,12 +250,10 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
                     e.target.value === "" ? 0 : Number(e.target.value)
                   )
                 }
-                className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0 
-      [&::-webkit-inner-spin-button]:appearance-none 
-      [&::-webkit-outer-spin-button]:appearance-none 
-      [&::-webkit-inner-spin-button]:m-0
-      [&::-webkit-outer-spin-button]:m-0
-      [-moz-appearance:textfield]"
+                className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0
+                [&::-webkit-inner-spin-button]:appearance-none
+                [&::-webkit-outer-spin-button]:appearance-none
+                [-moz-appearance:textfield]"
               />
             </label>
           </div>
@@ -241,7 +261,7 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
           {/* Markdown Editor */}
           <div className="space-y-2">
             <span className="text-sm text-zinc-400">Content (Markdown)</span>
-          <div className="rounded-md overflow-hidden border border-zinc-700 text-gray-300">
+            <div className="rounded-md overflow-hidden border border-zinc-700 text-gray-300">
               <MdEditor
                 modelValue={activeTask.content}
                 onChange={(val) =>
@@ -255,24 +275,25 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
         </div>
       )}
 
-      {/* Save Button */}
+      {/* Task Tabs */}
       <div className="flex flex-wrap gap-2 justify-center">
         {tasks.map((task, index) => (
           <button
             key={index}
             onClick={() => setActiveIndex(index)}
-            className={`px-3 py-1 rounded-md border text-sm  cursor-pointer duration-500 ${
+            className={`px-3 py-1 rounded-md border text-sm cursor-pointer duration-500 ${
               index === activeIndex
                 ? "bg-blue-600/20 border-blue-500 text-blue-300"
-                : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-blue-500/50 "
+                : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-blue-500/50"
             }`}
           >
             {task.title || `${index + 1}`}
           </button>
         ))}
       </div>
+
+      {/* Controls */}
       <div className="flex gap-3 items-center justify-center">
-        {/* Add Task */}
         <button
           onClick={addTask}
           className="cursor-pointer flex items-center gap-1 px-5 py-2 border border-green-600/90 text-green-600 rounded-md hover:bg-green-500/10 hover:scale-105 transition-transform duration-150"
@@ -280,7 +301,6 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
           <PlusCircle className="w-4 h-4" /> Add Task
         </button>
 
-        {/* Delete Task */}
         {activeTask && (
           <button
             onClick={() => removeTask(activeIndex)}
