@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Flow from "../../Flow";
 import { useParams, useRouter } from "next/navigation";
-import { useUser } from "@/app/(user)/layout";
+import { useUser } from "@/app/layout";
 import { getRoadmapById } from "@/app/(user)/roadmap-api";
 import Loading from "@/components/Loading";
 
