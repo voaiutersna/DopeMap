@@ -1,0 +1,602 @@
+@reference "tailwindcss";
+
+/* color setting  */
+:root {
+  --text-primary: #e2e8f0;    /* Slate 200 - Main text */
+  --text-secondary: #94a3b8;  /* Slate 400 - Secondary text */
+  --text-accent: #60a5fa;     /* Blue 400 - Links, accents */
+  --text-heading: #f1f5f9;    /* Slate 100 - Headings */
+  --bg-code: #282c34;         /* Slate 800 - Code background */
+  --bg-selection: #334155;    /* Slate 700 - Selection */
+  --bg-toolbar: #1e1e1e;      /* Slate 800 - Toolbar */
+  --border: #1e1e1e;          /* Slate 600 - Borders */
+}
+
+/*  Base Reset  */
+.md-editor.markdown,
+.markdown .md-editor {
+  font-family: inherit !important;
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+/*  EDITOR TEXT THEME  */
+.markdown .cm-editor {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown .cm-content {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+}
+
+.markdown .cm-line {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+/* Editor syntax highlighting */
+.markdown .ͼ1 .cm-line {
+  color: var(--text-primary) !important;
+}
+
+.markdown .ͼ2 .cm-activeLine {
+  background-color: var(--bg-toolbar) !important;
+}
+
+.markdown .ͼ1 .cm-activeLine {
+  background-color: var(--bg-toolbar) !important;
+}
+
+/* Specific text editor classes */
+.markdown .ͼ1 .cm-header {
+  color: var(--text-heading) !important;
+  font-weight: 600 !important;
+}
+
+.markdown .ͼ1 .cm-strong {
+  color: var(--text-heading) !important;
+  font-weight: 600 !important;
+}
+
+.markdown .ͼ1 .cm-em {
+  color: var(--text-primary) !important;
+  font-style: italic !important;
+}
+
+.markdown .ͼ1 .cm-link {
+  color: var(--text-accent) !important;
+}
+
+.markdown .ͼ1 .cm-quote {
+  color: var(--text-secondary) !important;
+  font-style: italic !important;
+}
+
+.markdown .ͼ1 .cm-keyword {
+  color: var(--text-heading) !important;
+}
+
+.markdown .ͼ1 .cm-comment {
+  color: #64748b !important;
+}
+
+.markdown .ͼ1 .cm-string {
+  color: var(--text-primary) !important;
+}
+
+.markdown .ͼ1 .cm-tag {
+  color: var(--text-accent) !important;
+}
+
+.markdown .ͼ1 .cm-attribute {
+  color: #34d399 !important;
+}
+
+.markdown .ͼ1 .cm-inline-code {
+  background-color: var(--bg-code) !important;
+  color: #f8fafc !important; 
+  padding: 0.1em 0.3em !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.8em !important;
+}
+
+/*  PREVIEW AREA  */
+.markdown .md-editor-preview-wrapper {
+  padding: 1rem !important; 
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown .md-editor-preview,
+.md-editor-preview.markdown {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* h */
+.markdown .md-editor-preview h1,
+.markdown .md-editor-preview h2, 
+.markdown .md-editor-preview h3,
+.markdown .md-editor-preview h4,
+.markdown .md-editor-preview h5,
+.markdown .md-editor-preview h6 {
+  color: var(--text-heading) !important;
+  font-weight: 600 !important;
+  margin: 0.75em 0 0.5em 0 !important;
+}
+
+.markdown .md-editor-preview h1 { font-size: 1.6em !important; }
+.markdown .md-editor-preview h2 { font-size: 1.4em !important; }
+.markdown .md-editor-preview h3 { font-size: 1.2em !important; }
+.markdown .md-editor-preview h4 { font-size: 1.1em !important; }
+.markdown .md-editor-preview h5 { font-size: 1em !important; }
+.markdown .md-editor-preview h6 { font-size: 0.9em !important; }
+
+/* text defult space */
+.markdown .md-editor-preview p,
+.markdown .md-editor-preview li {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  /* kuyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy */
+  /* margin: 0.75em 0 !important;  */
+  color: var(--text-primary) !important;
+}
+
+/* Bold text */
+.markdown .md-editor-preview strong {
+  color: var(--text-heading) !important;
+  font-weight: 600 !important;
+}
+
+/* Italic text */
+.markdown .md-editor-preview em {
+  color: var(--text-primary) !important;
+  font-style: italic !important;
+}
+
+/* Links */
+.markdown .md-editor-preview a {
+  color: var(--text-accent) !important;
+  text-decoration: underline !important;
+  font-size: inherit !important;
+}
+
+
+.markdown .md-editor-preview a:hover {
+  color: #93c5fd !important;
+}
+
+/* Code */
+.markdown .md-editor-preview code:not(pre code) {
+  background-color: var(--bg-code) !important;
+  color: #f8fafc !important; /* Slate 50 */
+  padding: 0.2em 0.4em !important; 
+  border-radius: 0.25rem !important;
+  font-size: 0.85em !important;
+}
+
+/* Blockquotes */
+.markdown .md-editor-preview blockquote {
+  border-left: 4px solid var(--border) !important;
+  color: var(--text-secondary) !important;
+  padding-left: 1em !important; 
+  margin: 1em 0 !important; 
+  background-color: transparent !important;
+  font-style: italic !important;
+}
+
+/* lists ul li */
+.markdown .md-editor-preview ul,
+.markdown .md-editor-preview ol {
+  margin: 1em 0 !important;
+  padding-left: 2em !important; 
+}
+
+.markdown .md-editor-preview li {
+  margin: 0.5em 0 !important; 
+  color: var(--text-primary) !important;
+  font-size: 14px !important;
+}
+
+/* task lists */
+.markdown .contains-task-list {
+  list-style: none !important;
+  padding-left: 1.5em !important;
+}
+
+.markdown input[type="checkbox"] {
+  width: 1.1em !important;
+  height: 1.1em !important;
+  border: 1px solid var(--border) !important;
+  background-color: var(--bg-toolbar) !important;
+  border-radius: 0.25rem !important;
+  accent-color: var(--text-accent) !important;
+  margin-right: 0.5em !important;
+  vertical-align: middle !important;
+}
+
+/* IMAGES  */
+.markdown .md-editor-preview img,
+.md-editor-preview.markdown img,
+.markdown img {
+  max-width: 300px !important;
+  max-height: 200px !important;
+  height: auto !important;
+  width: auto !important;
+  display: block !important;
+  margin: 1em auto !important;
+  border-radius: 0.375rem !important;
+  border: none !important;
+  padding: 0 !important;
+  object-fit: contain !important;
+}
+
+.markdown .md-editor-preview figure,
+.md-editor-preview.markdown figure {
+  max-width: 320px !important;
+  margin: 1em auto !important;
+}
+
+/*TOOLBAR & DROPDOWN  */
+.markdown .md-editor-toolbar,
+.markdown .md-editor-dropdown {
+  background-color: var(--bg-toolbar) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown .md-editor-toolbar-item {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  border: none !important;
+}
+
+.markdown .md-editor-toolbar-item:hover {
+  background-color: var(--bg-selection) !important;
+  color: var(--text-heading) !important;
+}
+
+.markdown .md-editor-toolbar-item svg {
+  color: var(--text-primary) !important;
+  stroke: var(--text-primary) !important;
+}
+
+.markdown .md-editor-toolbar-item:hover svg {
+  color: var(--text-heading) !important;
+  stroke: var(--text-heading) !important;
+}
+
+/* dropdown menu */
+.markdown .md-editor-menu {
+  background-color: var(--bg-toolbar) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown .md-editor-menu-item {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown .md-editor-menu-item:hover {
+  background-color: var(--bg-selection) !important;
+  color: var(--text-heading) !important;
+}
+
+/* image upload dropdown */
+.markdown .md-editor-menu-item-image {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.markdown .md-editor-menu-item-image:hover {
+  background-color: var(--bg-selection) !important;
+  color: var(--text-heading) !important;
+}
+
+/*  EDITOR GUTTER & SCROLLBAR  */
+.markdown .cm-gutters {
+  display: none !important;
+}
+
+.markdown .cm-lineNumbers {
+  display: none !important;
+}
+
+/* cursor and selection */
+.markdown .cm-cursor {
+  border-left-color: var(--text-primary) !important;
+}
+
+.markdown .cm-selectionBackground {
+  background-color: var(--bg-selection) !important;
+}
+
+/* scrollbar */
+.markdown .cm-scroller,
+.markdown .md-editor-preview-wrapper {
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--border) transparent !important;
+}
+
+.markdown .cm-scroller::-webkit-scrollbar,
+.markdown .md-editor-preview-wrapper::-webkit-scrollbar {
+  width: 4px !important;
+  background: transparent !important;
+}
+
+.markdown .cm-scroller::-webkit-scrollbar-thumb,
+.markdown .md-editor-preview-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border) !important;
+  border-radius: 2px !important;
+}
+
+/*  MISC ELEMENTS  */
+.markdown .cm-content {
+  padding: 1rem !important; 
+}
+
+/* code */
+.markdown .md-editor-preview pre {
+  font-size: 0.85em !important;
+  line-height: 1.5 !important;
+  background-color: var(--bg-code) !important;
+  color: #f8fafc !important;
+  border-radius: 0.5rem !important;
+}
+
+/* tables */
+.markdown .md-editor-preview table {
+  font-size: 0.85em !important;
+  margin: 1em 0 !important; 
+  background-color: var(--bg-code) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.markdown .md-editor-preview th,
+.markdown .md-editor-preview td {
+  padding: 0.75em !important; 
+  background-color: var(--bg-code) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.markdown .md-editor-preview th {
+  background-color: var(--bg-toolbar) !important;
+  color: var(--text-heading) !important;
+}
+
+/* Container spacing */
+.markdown .md-editor-content-wrapper {
+  gap: 1rem !important; 
+}
+
+/* Modal */
+.markdown .md-editor-modal-container {
+  background-color: var(--bg-toolbar) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 1.5rem !important; 
+}
+
+.markdown .md-editor-modal-container input,
+.markdown .md-editor-modal-container textarea {
+  background-color: #0f172a !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 0.5rem !important; 
+}
+
+.markdown .md-editor-modal-container button {
+  background-color: var(--bg-selection) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+  padding: 0.5rem 1rem !important; 
+}
+
+.markdown .md-editor-modal-container button:hover {
+  background-color: var(--border) !important;
+  color: var(--text-heading) !important;
+}
+
+/* ภาษาเอเลี่ยน ตัวเขียว  */
+.markdown .ͼ1 .ͼ2 .ͼ4 .ͼo .cm-line,
+.markdown .ͼ1 .ͼ2 .ͼ4 .cm-line,
+.markdown .ͼ1 .ͼ2 .cm-line,
+.markdown .ͼ1 .cm-line {
+  color: var(--text-primary) !important;
+}
+
+.markdown .ͼ1 .ͼ2 .ͼ4 .ͼo .cm-line span,
+.markdown .ͼ1 .ͼ2 .ͼ4 .cm-line span,
+.markdown .ͼ1 .ͼ2 .cm-line span,
+.markdown .ͼ1 .cm-line span {
+  color: var(--text-primary) !important;
+}
+
+.markdown .cm-line > span:not([class]) {
+  color: var(--text-primary) !important;
+}
+
+.markdown .cm-line * {
+  color: inherit !important;
+}
+
+
+/* Math formula icon */
+.markdown .katex,
+.markdown .katex * {
+      color: var(--text-heading) !important;
+       fill : var(--text-heading) !important;
+      background-color: transparent !important;
+}
+
+
+/* alert */
+.markdown .md-editor-admonition {
+  background-color: var(--bg-code) !important;
+  border: 1px solid var(--border) !important;
+  border-left: 4px solid var(--text-accent) !important;
+  color: var(--text-primary) !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+  margin: 1em 0 !important;
+}
+
+.markdown .md-editor-admonition-title {
+  color: var(--text-heading) !important;
+  font-weight: 600 !important;
+  font-size: 1em !important;
+  margin-bottom: 0.5em !important;
+  background-color: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+/* diff type diff color  */
+.markdown .md-editor-admonition-note {
+  border-left-color: var(--text-accent) !important;
+}
+
+.markdown .md-editor-admonition-abstract {
+  border-left-color: #06b6d4 !important;
+}
+
+.markdown .md-editor-admonition-info {
+  border-left-color: #0ea5e9 !important;
+}
+
+.markdown .md-editor-admonition-tip {
+  border-left-color: #10b981 !important;
+}
+
+.markdown .md-editor-admonition-success {
+  border-left-color: #22c55e !important;
+}
+
+.markdown .md-editor-admonition-question {
+  border-left-color: #8b5cf6 !important;
+}
+
+.markdown .md-editor-admonition-warning {
+  border-left-color: #f59e0b !important;
+}
+
+.markdown .md-editor-admonition-failure {
+  border-left-color: #ef4444 !important;
+}
+
+.markdown .md-editor-admonition-danger {
+  border-left-color: #dc2626 !important;
+}
+
+.markdown .md-editor-admonition-bug {
+  border-left-color: #b91c1c !important;
+}
+
+.markdown .md-editor-admonition-example {
+  border-left-color: #a855f7 !important; 
+}
+
+.markdown .md-editor-admonition-quote {
+  border-left-color: var(--text-secondary) !important; 
+}
+
+.markdown .md-editor-admonition-hint {
+  border-left-color: #06b6d4 !important;
+}
+
+.markdown .md-editor-admonition-caution {
+  border-left-color: #d97706 !important;
+}
+
+.markdown .md-editor-admonition-error {
+  border-left-color: #dc2626 !important;
+}
+
+.markdown .md-editor-admonition-attention {
+  border-left-color: #eab308 !important;
+}
+
+/* Alert box content */
+.markdown .md-editor-admonition p,
+.markdown .md-editor-admonition ul,
+.markdown .md-editor-admonition ol,
+.markdown .md-editor-admonition li {
+  color: var(--text-primary) !important;
+  margin: 0.5em 0 !important;
+}
+
+.markdown .md-editor-admonition ul,
+.markdown .md-editor-admonition ol {
+  padding-left: 1.5em !important;
+}
+
+.markdown .md-editor-admonition code {
+  background-color: var(--bg-toolbar) !important;
+  color: var(--text-heading) !important;
+  padding: 0.2em 0.4em !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.85em !important;
+}
+
+/* diagram */
+.markdown .md-editor-mermaid .node > rect,
+.markdown .md-editor-mermaid .node polygon,
+.markdown .md-editor-mermaid .node circle,
+.markdown .md-editor-mermaid .node ellipse,
+.markdown .md-editor-mermaid .node polygon,
+.markdown .md-editor-mermaid .node line {
+  fill: var(--bg-code) !important;
+  stroke: var(--border) !important;
+}
+
+.markdown .md-editor-mermaid .label,
+.markdown .md-editor-mermaid .nodeLabel {
+  fill: var(--bg-code) !important;
+  color: var(--border) !important;
+}
+
+.markdown .md-editor-mermaid .flowchart-link,
+.markdown .md-editor-mermaid .edgePath .path,
+.markdown .md-editor-mermaid .arrowheadPath {
+  stroke: var(--border) !important;
+  fill: var(--border) !important;
+}
+
+/* Arrow heads */
+.markdown .md-editor-mermaid .arrowheadPath {
+  fill: var(--border) !important;
+}
+
+/* Edge labels if needed */
+.markdown .md-editor-mermaid .edgeLabel {
+  background-color: var(--border) !important;
+  color: var(--border) !important;
+}
+
+.markdown .md-editor-mermaid .edgeLabel text {
+  fill: var(--border) !important;
+}
+/* Arrow lines */
+.markdown .md-editor-mermaid .flowchart-link,
+.markdown .md-editor-mermaid .edgePath .path {
+  stroke: var(--border) !important;
+}
+
+
+.markdown .md-editor-mermaid .marker path,
+.markdown .md-editor-mermaid .arrowMarkerPath {
+  stroke: var(--border) !important;
+  fill: var(--border) !important;
+}

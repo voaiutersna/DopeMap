@@ -240,17 +240,15 @@ export default function TaskEditor({ onClose, node }: TaskEditorProps) {
 
           {/* Markdown Editor */}
           <div className="space-y-2">
-            <span className="text-sm text-gray-500">Content (Markdown)</span>
-            <div className="rounded-md overflow-hidden border border-zinc-700">
+            <span className="text-sm text-zinc-400">Content (Markdown)</span>
+          <div className="rounded-md overflow-hidden border border-zinc-700 text-gray-300">
               <MdEditor
                 modelValue={activeTask.content}
                 onChange={(val) =>
                   handleTaskChange(activeIndex, "content", val)
                 }
-                theme="dark"
-                previewTheme="github"
                 language="en-US"
-                style={{ height: "400px" }}
+                className={`markdown`}
               />
             </div>
           </div>

@@ -170,6 +170,7 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
           onDragStart={isEdit ? onDragStart : undefined}
           onDragOver={isEdit ? onDragOver : undefined}
           fitView
+          fitViewOptions={{ padding: 1 }}
           defaultEdgeOptions={{ type: "step" }}
           snapToGrid={true}
           snapGrid={[20, 20]}
@@ -177,7 +178,7 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
           maxZoom={2}
           nodesDraggable={isEdit}
           nodesConnectable={isEdit}
-          elementsSelectable={isEdit}
+          elementsSelectable={true}
           zoomOnScroll={true}
           zoomOnPinch={true}
           panOnScroll={true}
@@ -208,7 +209,7 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
           </div>
         </ReactFlow>
       </div>
-      {isEdit ? <Sidebar /> : <ViewSidebar />}
+      {isEdit ? <Sidebar /> : <ViewSidebar nodeData={initialData} historyData={{}}/>}
       {isEdit && (
         <div
           className={`fixed inset-0 z-50 transition-all duration-500 ${

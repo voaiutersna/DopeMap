@@ -7,24 +7,19 @@ import { MdPreview } from 'md-editor-rt';
 export default function NoteNode({ data }: { data: NoteNodeData }) {
 
   return (
-    <div className="bg-[#2f3131] text-gray-300 border border-[#4b4f51] rounded-md  shadow-md relative">
+    <div className="bg-[#2f3131] text-gray-300 border border-[#4b4f51] rounded-md  shadow-md relative min-w-56">
       {/* Title */}
       <div className="text-xs font-mono tracking-wider border-b border-[#4b4f51] w-full p-3">
         {data.label}
       </div>
 
       {/* Textarea */}
-      <div className="p-3">
+      <div className="p-3 min-h-20">
         <MdPreview
           id="text"
           value={data.content}
-          className="
-            w-full min-w-[200px] 
-            h-20 min-h-[60px] 
-            p-2 text-gray-300 bg-[#1e1f1f]/10
-            rounded-md focus:outline-none nodrag
-            resize-none
-          "
+          className="markdown"
+          language="en-US"
         />
       </div>
 

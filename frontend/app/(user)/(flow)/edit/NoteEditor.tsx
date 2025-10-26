@@ -66,14 +66,12 @@ export default function NoteEditor({ onClose, node }: NoteEditorProps) {
         {/* Markdown Editor */}
         <div className="space-y-2">
           <span className="text-sm text-zinc-400">Content (Markdown)</span>
-          <div className="rounded-md overflow-hidden border border-zinc-700">
+          <div className="rounded-md overflow-hidden border border-zinc-700 text-gray-300">
             <MdEditor
               modelValue={content}
               onChange={setContent}
-              theme="dark"
-              previewTheme="github"
               language="en-US"
-              style={{ height: "400px" }}
+              className={`markdown`}
             />
           </div>
         </div>

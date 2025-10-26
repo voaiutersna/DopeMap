@@ -77,7 +77,6 @@ export default function ProfilePage() {
       const payload = {
         title: editing.title,
         description: editing.description,
-
         is_public: editing.is_public,
       };
       const res = await api.put(`/roadmaps/${editing.id}`, payload);
@@ -196,7 +195,7 @@ export default function ProfilePage() {
         {/* --- HISTORY --- */}
         <section className="bg-zinc-800/60 border border-zinc-700 rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-4">📜 Your Roadmap History</h2>
-          {history == null ? (
+          {!history ? (
             <div className="text-zinc-400">No history yet.</div>
           ) : (
             <div className="space-y-3">
