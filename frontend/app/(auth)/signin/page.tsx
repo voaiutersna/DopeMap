@@ -32,7 +32,8 @@ export default function SignInPage() {
           type: "success",
         })
 
-        router.push("/profile");
+        // router.push("/profile");
+        window.location.href = "/profile";
       } else {
 
          toast.update(toastId, {

@@ -1,58 +1,21 @@
-// app/UserContext.tsx
 "use client";
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { getMe } from "./user-api";
+
+import React, { ReactNode, useEffect } from "react";
+import { useUser } from "@/app/layout"; // global context
 import { useRouter } from "next/navigation";
+import Loading from "@/components/Loading";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  created_at: string;
-}
-
-interface UserContextValue {
-  me: User | null;
-  loading: boolean;
-}
-
-const UserContext = createContext<UserContextValue>({
-  me: null,
-  loading: true,
-});
-
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [me, setMe] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function UserLayout({ children }: { children: ReactNode }) {
+  const { me, loading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    const fetchMe = async () => {
-      try {
-        const profile = await getMe();
-        setMe(profile);
-        if (profile == null){
-          router.push("/signin")
-        }
-      } catch (err) {
-        console.error("Failed to fetch user", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!loading && !me) {
+      router.push("/signin"); 
+    }
+  }, [loading, me, router]);
 
-    fetchMe();
-  }, []);
+  if (loading || !me) return <Loading />;
 
-  return (
-    <UserContext.Provider value={{ me, loading }}>
-      {children}
-    </UserContext.Provider>
-  );
-};
-
-export default function ProfileLayout({ children }: { children: React.ReactNode }) {
-  return <UserProvider>{children}</UserProvider>;
+  return <>{children}</>;
 }
-
-export const useUser = () => useContext(UserContext);

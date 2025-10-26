@@ -2,13 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import Flow from "../../Flow";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@/app/(user)/layout";
 import { getRoadmapById } from "@/app/(user)/roadmap-api";
+import Loading from "@/components/Loading";
 
 export default function EditPage() {
   const { me, loading: userLoading } = useUser();
   const params = useParams();
+  const router = useRouter();
   const roadmapId = params.flowId as string;
 
   const [roadmap, setRoadmap] = useState<any>(null);
@@ -18,35 +20,28 @@ export default function EditPage() {
     const fetchRoadmap = async () => {
       try {
         if (!roadmapId || userLoading) return;
+
         const res = await getRoadmapById(roadmapId);
-        const data = res;
-        setRoadmap(data || "");
-        console.log(res)
+
+        if (res == null) {
+          router.push("/profile");
+          return;
+        }
+
+        setRoadmap(res);
       } catch (err) {
         console.error("Failed to fetch roadmap:", err);
+        router.push("/profile");
       } finally {
         setLoading(false);
       }
     };
 
     fetchRoadmap();
-  }, [roadmapId, userLoading]);
-
+  }, [roadmapId, userLoading, router]);
 
   if (userLoading || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen text-zinc-400">
-        Loading roadmap...
-      </div>
-    );
-  }
-
-  if (!roadmap) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-400">
-        Roadmap not found.
-      </div>
-    );
+    return <Loading />;
   }
 
   return (

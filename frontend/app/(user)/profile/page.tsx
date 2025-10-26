@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useUser } from "../layout";
+import { useUser } from "@/app/layout";
 import { api } from "@/api";
 import Link from "next/link";
 import { getRoadmaps } from "../roadmap-api";
 import { getHistory } from "../history-api";
+import Loading from "@/components/Loading";
+import SignOut from "@/components/SignOut";
 
 type Roadmap = {
   id: string;
@@ -50,7 +52,7 @@ export default function ProfilePage() {
     if (!loading) fetchData();
   }, [loading]);
 
-  if (loading || loadingData) return <div>Loading...</div>;
+  if (loading || loadingData) return <Loading/>;
 
   const createRoadmap = async () => {
     try {
@@ -138,12 +140,15 @@ export default function ProfilePage() {
               <div className="text-lg font-medium">{me?.name}</div>
               <div className="text-sm text-zinc-400">{me?.email}</div>
             </div>
-            <button
-              onClick={createRoadmap}
-              className="px-4 py-2 border border-green-500 text-green-400 rounded-md hover:bg-green-500/10 transition"
-            >
-              + New Roadmap
-            </button>
+              <div className="flex gap-2">
+      <button
+        onClick={createRoadmap}
+        className="px-4 py-2 border border-green-500 text-green-400 rounded-md hover:bg-green-500/10 transition"
+      >
+        + New Roadmap
+      </button>
+    <SignOut/>
+    </div>
           </div>
         </section>
 

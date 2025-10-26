@@ -43,7 +43,6 @@ export default function MapsPage() {
     if (!map) return;
 
     if (!map.enrolled) {
-      // Enroll → create history
       try {
         const res = await api.post("/history", { roadmap_id: mapId });
         if (res.data.success) {
@@ -109,7 +108,7 @@ export default function MapsPage() {
                   <h2 className="text-lg font-semibold mb-2">{map.title}</h2>
                   <p className="text-sm text-zinc-400 mb-3">{map.description}</p>
                   <div className="text-xs text-zinc-500">
-                    Author: <span className="text-zinc-300">{map.author}</span>
+                    metaID : <span className="text-zinc-300">{map.id}</span>
                   </div>
                 </div>
 

@@ -32,7 +32,9 @@ export default function RegisterPage() {
           type: "success",
         });
 
-        setTimeout(() => router.push("/profile"), 2000);
+        // ต่างกันตรงที่ window.location.href จะ render ใหม่ทำให้ได้ getMe เเล้ว
+        // router.push("/profile");
+        window.location.href = "/profile";
       } else {
         toast.update(toastId, {
           render: response.data.error || "Registration failed",

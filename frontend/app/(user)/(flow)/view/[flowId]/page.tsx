@@ -2,18 +2,19 @@
 
 import React, { useEffect, useState } from "react";
 import Flow from "../../Flow";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@/app/(user)/layout";
 import { getRoadmapById } from "@/app/(user)/roadmap-api";
-import ViewSidebar from "./ViewSideBar";
+import Loading from "@/components/Loading";
 
 export default function ViewPage() {
   const { me, loading: userLoading } = useUser();
   const params = useParams();
+  const router = useRouter();
   const roadmapId = params.flowId as string;
 
   const [roadmap, setRoadmap] = useState<any>(null);
-  const [history , setHistory] = useState(null);
+  const [history, setHistory] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,39 +23,32 @@ export default function ViewPage() {
         if (!roadmapId || userLoading) return;
 
         const res = await getRoadmapById(roadmapId);
-        const roadmapData = res
 
-        setRoadmap(roadmapData);
+        if (res == null) {
+          router.push("/profile");
+          return;
+        }
+
+        setRoadmap(res);
       } catch (err) {
         console.error("Failed to fetch roadmap:", err);
+        router.push("/profile");
       } finally {
         setLoading(false);
       }
     };
 
     fetchRoadmap();
-  }, [roadmapId, userLoading]);
+  }, [roadmapId, userLoading, router]);
 
   if (userLoading || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen text-zinc-400">
-        Loading roadmap...
-      </div>
-    );
-  }
-
-  if (!roadmap) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-400">
-        Roadmap not found.
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
     <div className="flex w-full h-full">
       <div className="flex-1">
-        <Flow isEdit={false} roadmapId={roadmapId} initialData={roadmap}  />
+        <Flow isEdit={false} roadmapId={roadmapId} initialData={roadmap} />
       </div>
     </div>
   );
