@@ -13,6 +13,7 @@ export default function ViewPage() {
   const roadmapId = params.flowId as string;
 
   const [roadmap, setRoadmap] = useState<any>(null);
+  const [history , setHistory] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function ViewPage() {
   return (
     <div className="flex w-full h-full">
       <div className="flex-1">
-        <Flow isEdit={false} roadmapId={roadmapId} initialData={roadmap} />
+        <Flow isEdit={false} roadmapId={roadmapId} initialData={roadmap}  />
       </div>
     </div>
   );

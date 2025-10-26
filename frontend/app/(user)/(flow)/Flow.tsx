@@ -32,7 +32,6 @@ import NodeWrapper from "./node/Nodewrapper";
 import Toolbar from "./Toolbar";
 import { v4 as uuidv4 } from "uuid";
 import Editor from "./edit/Editor";
-import ViewSidebar from "./view/[flowId]/ViewSideBar";
 import { defaultLinkNodeData, defaultNoteNodeData, defaultTaskNodeData, defaultTextNodeData } from "./defaultNodeData";
 
 const getId = () => `${uuidv4()}`;
@@ -209,7 +208,7 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
           </div>
         </ReactFlow>
       </div>
-      {isEdit ? <Sidebar /> : <ViewSidebar nodeData={initialData} historyData={{}}/>}
+      {isEdit && <Sidebar /> }
       {isEdit && (
         <div
           className={`fixed inset-0 z-50 transition-all duration-500 ${
