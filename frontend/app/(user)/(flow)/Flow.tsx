@@ -33,16 +33,36 @@ import NodeWrapper from "./node/Nodewrapper";
 import Toolbar from "./Toolbar";
 import { v4 as uuidv4 } from "uuid";
 import Editor from "./edit/Editor";
-import { defaultLinkNodeData, defaultNoteNodeData, defaultTaskNodeData, defaultTextNodeData } from "./defaultNodeData";
+import {
+  defaultLinkNodeData,
+  defaultNoteNodeData,
+  defaultTaskNodeData,
+  defaultTextNodeData,
+} from "./defaultNodeData";
 import { CustomNode } from "./type";
+import DeleteEdge from "./edge/DeleteEdge";
 
 const getId = () => `${uuidv4()}`;
 
-const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId: any,initialData? : any}) => {
+const DnDFlow = ({
+  isEdit,
+  roadmapId,
+  initialData,
+}: {
+  isEdit?: boolean;
+  roadmapId: any;
+  initialData?: any;
+}) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [editNodeId, setEditNodeId] = useState<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
+
+
+const edgeTypes = {
+  delete: (props: any) => <DeleteEdge {...props} isEdit={isEdit} />,
+};
+
 
   const nodeTypes = {
     note: (props: any) =>
@@ -82,13 +102,15 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
       ),
   };
 
-   useEffect(() => {
-    if (initialData.roadmap_data && (initialData.roadmap_data.nodes || initialData.roadmap_data.edges)) {
+  useEffect(() => {
+    if (
+      initialData.roadmap_data &&
+      (initialData.roadmap_data.nodes || initialData.roadmap_data.edges)
+    ) {
       setNodes(initialData.roadmap_data.nodes || []);
       setEdges(initialData.roadmap_data.edges || []);
     }
   }, [initialData, setNodes, setEdges]);
-
 
   const [type, setType] = useDnD();
 
@@ -106,59 +128,58 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
   );
 
   const onDrop: React.DragEventHandler<HTMLDivElement> = useCallback(
-  (event) => {
-    event.preventDefault();
+    (event) => {
+      event.preventDefault();
 
-    if (!type) return;
+      if (!type) return;
 
-    const position = screenToFlowPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
 
-    // Map type to default data
-    let newNode: CustomNode;
+      // Map type to default data
+      let newNode: CustomNode;
 
-    switch (type) {
-      case "note":
-        newNode = {
-          id: getId(),
-          type: "note",
-          position,
-          data: { ...defaultNoteNodeData },
-        };
-        break;
-      case "task":
-        newNode = {
-          id: getId(),
-          type: "task",
-          position,
-          data: { ...defaultTaskNodeData },
-        };
-        break;
-      case "link":
-        newNode = {
-          id: getId(),
-          type: "link",
-          position,
-          data: { ...defaultLinkNodeData },
-        };
-        break;
-      case "ctext":
-        newNode = {
-          id: getId(),
-          type: "ctext",
-          position,
-          data: { ...defaultTextNodeData },
-        };
-        break;
-    }
+      switch (type) {
+        case "note":
+          newNode = {
+            id: getId(),
+            type: "note",
+            position,
+            data: { ...defaultNoteNodeData },
+          };
+          break;
+        case "task":
+          newNode = {
+            id: getId(),
+            type: "task",
+            position,
+            data: { ...defaultTaskNodeData },
+          };
+          break;
+        case "link":
+          newNode = {
+            id: getId(),
+            type: "link",
+            position,
+            data: { ...defaultLinkNodeData },
+          };
+          break;
+        case "ctext":
+          newNode = {
+            id: getId(),
+            type: "ctext",
+            position,
+            data: { ...defaultTextNodeData },
+          };
+          break;
+      }
 
-
-    setNodes((nds) => nds.concat(newNode));
-  },
-  [screenToFlowPosition, type]
-);
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [screenToFlowPosition, type]
+  );
 
   const onDragStart: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.dataTransfer.effectAllowed = "move";
@@ -168,13 +189,14 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
     <div className="dndflow flex w-full h-[calc(100vh-56px)]  relative  justify-center">
       {isEdit && (
         <div className="container absolute top-4 left-0-translate-x-1/2">
-          <Toolbar roadmapId={roadmapId} initialData={initialData}/>
+          <Toolbar roadmapId={roadmapId} initialData={initialData} />
         </div>
       )}
       <div className="w-full h-full bg-[#2f3131] relative">
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          edgeTypes={edgeTypes}
           nodeTypes={nodeTypes}
           onNodesChange={isEdit ? onNodesChange : undefined}
           onEdgesChange={isEdit ? onEdgesChange : undefined}
@@ -184,7 +206,7 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
           onDragOver={isEdit ? onDragOver : undefined}
           fitView
           fitViewOptions={{ padding: 1 }}
-          defaultEdgeOptions={{ type: "step" }}
+          defaultEdgeOptions={{ type: "delete" }}
           snapToGrid={true}
           snapGrid={[20, 20]}
           minZoom={0.5}
@@ -222,7 +244,11 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
           </div>
         </ReactFlow>
       </div>
-      {isEdit && <Sidebar /> }
+      {isEdit && (
+        <div className="hidden md:flex">
+          <Sidebar />
+        </div>
+      )}
       {isEdit && (
         <div
           className={`fixed inset-0 z-50 transition-all duration-500 ${
@@ -247,10 +273,22 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
   );
 };
 
-export default ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId: any,initialData? : any}) => (
+export default ({
+  isEdit,
+  roadmapId,
+  initialData,
+}: {
+  isEdit?: boolean;
+  roadmapId: any;
+  initialData?: any;
+}) => (
   <ReactFlowProvider>
     <DnDProvider>
-      <DnDFlow isEdit={isEdit} roadmapId={roadmapId} initialData={initialData}/>
+      <DnDFlow
+        isEdit={isEdit}
+        roadmapId={roadmapId}
+        initialData={initialData}
+      />
     </DnDProvider>
   </ReactFlowProvider>
 );
