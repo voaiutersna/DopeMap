@@ -20,6 +20,7 @@ import {
   useEdgesState,
   useReactFlow,
   MiniMap,
+  Connection,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import TaskNode from "./node/TaskNode";
@@ -33,12 +34,12 @@ import Toolbar from "./Toolbar";
 import { v4 as uuidv4 } from "uuid";
 import Editor from "./edit/Editor";
 import { defaultLinkNodeData, defaultNoteNodeData, defaultTaskNodeData, defaultTextNodeData } from "./defaultNodeData";
+import { CustomNode } from "./type";
 
 const getId = () => `${uuidv4()}`;
 
 const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId: any,initialData? : any}) => {
-  const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [editNodeId, setEditNodeId] = useState<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
@@ -92,7 +93,7 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
   const [type, setType] = useDnD();
 
   const onConnect: OnConnect = useCallback(
-    (params: Node) => setEdges((eds: Edge) => addEdge(params, eds)),
+    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     []
   );
 
@@ -116,30 +117,43 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
     });
 
     // Map type to default data
-    let data;
+    let newNode: CustomNode;
+
     switch (type) {
       case "note":
-        data = { ...defaultNoteNodeData };
+        newNode = {
+          id: getId(),
+          type: "note",
+          position,
+          data: { ...defaultNoteNodeData },
+        };
         break;
       case "task":
-        data = { ...defaultTaskNodeData };
+        newNode = {
+          id: getId(),
+          type: "task",
+          position,
+          data: { ...defaultTaskNodeData },
+        };
         break;
       case "link":
-        data = { ...defaultLinkNodeData };
+        newNode = {
+          id: getId(),
+          type: "link",
+          position,
+          data: { ...defaultLinkNodeData },
+        };
         break;
       case "ctext":
-        data = { ...defaultTextNodeData };
+        newNode = {
+          id: getId(),
+          type: "ctext",
+          position,
+          data: { ...defaultTextNodeData },
+        };
         break;
-      default:
-        data = { label: `${type} node` };
     }
 
-    const newNode: Node = {
-      id: getId(),
-      type: type,
-      position,
-      data,
-    };
 
     setNodes((nds) => nds.concat(newNode));
   },
@@ -191,18 +205,18 @@ const DnDFlow = ({ isEdit ,roadmapId,initialData}: { isEdit?: boolean ,roadmapId
               nodeColor={(node) => {
                 switch (node.type) {
                   case "note":
-                    return "#f59e0b"; // orange
+                    return "#f59e0b";
                   case "task":
-                    return "#10b981"; // green
+                    return "#10b981";
                   case "link":
-                    return "#3b82f6"; // blue
+                    return "#3b82f6";
                   case "ctext":
-                    return "#8b5cf6"; // purple
+                    return "#8b5cf6";
                   default:
-                    return "#9ca3af"; // gray for any other type
+                    return "#9ca3af";
                 }
               }}
-              nodeStrokeColor={() => "#ffffff"} // white border for visibility
+              nodeStrokeColor={() => "#ffffff"}
               nodeBorderRadius={4}
             />
           </div>

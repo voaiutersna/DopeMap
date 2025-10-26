@@ -5,8 +5,7 @@ import TaskNode from "./node/TaskNode";
 import LinkNode from "./node/LinkNode";
 import TextNode from "./node/TextNode";
 import { defaultLinkNodeData, defaultNoteNodeData, defaultTaskNodeData, defaultTextNodeData } from "./defaultNodeData";
-
-
+import { NodeType } from "./type";
 
 
 export default function NodeSidebar() {
@@ -14,7 +13,7 @@ export default function NodeSidebar() {
 
   const onDragStart = (
     event: React.DragEvent<HTMLDivElement>,
-    nodeType: string
+    nodeType: NodeType
   ) => {
     if (setType) setType(nodeType);
     event.dataTransfer.effectAllowed = "move";

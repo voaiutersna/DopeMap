@@ -1,5 +1,4 @@
-
-import type { NoteNodeData, TextNodeData, TaskNodeData, LinkNodeData, Task } from "./type";
+import type { NoteNodeData, TextNodeData, TaskNodeData, LinkNodeData } from "./type";
 
 export const defaultNoteNodeData: NoteNodeData = {
   label: "Note Here",

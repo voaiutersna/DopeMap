@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@/app/layout";
 import { getRoadmapById } from "@/app/(user)/roadmap-api";
 import Loading from "@/components/Loading";
+import { Roadmap } from "@/app/(user)/type";
 
 export default function EditPage() {
   const { me, loading: userLoading } = useUser();
@@ -13,7 +14,7 @@ export default function EditPage() {
   const router = useRouter();
   const roadmapId = params.flowId as string;
 
-  const [roadmap, setRoadmap] = useState<any>(null);
+  const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

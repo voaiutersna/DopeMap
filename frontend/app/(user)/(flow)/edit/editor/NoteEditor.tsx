@@ -3,14 +3,15 @@ import { useReactFlow } from "@xyflow/react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import { X } from "lucide-react";
-import type { CustomNode } from "../type";
+import type { CustomNode } from "../../type";
+import Header from "./components/Header";
 
-type NoteEditorProps = {
+
+
+export default function NoteEditor({ onClose, node }: {
   onClose: () => void;
   node: CustomNode;
-};
-
-export default function NoteEditor({ onClose, node }: NoteEditorProps) {
+}) {
   const { setNodes } = useReactFlow();
 
   const initialLabel = (node.data as any)?.label ?? "Untitled Note";
@@ -41,13 +42,7 @@ export default function NoteEditor({ onClose, node }: NoteEditorProps) {
   return (
     <div className=" container mx-auto min-h-[100dvh] text-zinc-100 p-6 font-mono flex flex-col gap-6 overflow-y-auto py-12">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Edit Note</h1>
-        <X
-          className="w-6 h-6 text-red-500/80 cursor-pointer bg-red-900/20 rounded-full p-1 hover:bg-red-900/30 transition"
-          onClick={onClose}
-        />
-      </div>
+      <Header headerTitle={"Edit Note Node"} onClose={onClose}/>
 
       {/* Form Section */}
       <div className="flex flex-col gap-5 ">

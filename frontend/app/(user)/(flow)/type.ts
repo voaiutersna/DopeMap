@@ -13,7 +13,7 @@ export type TextNodeData = {
 
 export type TaskNodeData = {
   title: string;
-  tasks: Task[];
+  tasks?: Task[];
 };
 
 export type LinkNodeData = {

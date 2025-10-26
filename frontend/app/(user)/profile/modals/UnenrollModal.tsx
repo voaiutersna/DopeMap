@@ -3,27 +3,32 @@
 import React from "react";
 import { HistoryType } from "../../type";
 import { api } from "@/api";
+import Toaster from "@/components/Toaster";
+import { toast } from "react-toastify";
 
 interface Props {
   unenrollTarget: HistoryType;
   setUnenrollTarget: React.Dispatch<React.SetStateAction<HistoryType | null>>;
+  removeFromHistory: (id: string) => void; // <-- new prop
 }
 
-export default function UnenrollModal({ unenrollTarget, setUnenrollTarget }: Props) {
+export default function UnenrollModal({ unenrollTarget, setUnenrollTarget, removeFromHistory }: Props) {
   const handleUnenroll = async () => {
     try {
       const res = await api.delete(`/enroll/${unenrollTarget.roadmap_id}`);
       if (res.data.success) {
-        setUnenrollTarget(null);
-        window.location.reload(); 
+        removeFromHistory(unenrollTarget.id); // <-- remove immediately from list
+        setUnenrollTarget(null); // close modal
       }
     } catch (err: any) {
       console.error("Failed to unenroll", err);
-      alert(err.response?.data?.detail || "Failed to unenroll");
+      toast.error(err.response?.data?.detail || "Failed to unenroll");
     }
   };
 
   return (
+    <>
+    <Toaster/>
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={() => setUnenrollTarget(null)} />
       <div className="relative bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-sm z-10">
@@ -48,5 +53,6 @@ export default function UnenrollModal({ unenrollTarget, setUnenrollTarget }: Pro
         </div>
       </div>
     </div>
+    </>
   );
 }

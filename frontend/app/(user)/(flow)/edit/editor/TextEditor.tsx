@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { X } from "lucide-react";
-import type { CustomNode } from "../type";
+import type { CustomNode } from "../../type";
+import Header from "./components/Header";
 
-type TextEditorProps = {
+export default function TextEditor({
+  onClose,
+  node,
+}: {
   onClose: () => void;
   node: CustomNode;
-};
-
-export default function TextEditor({ onClose, node }: TextEditorProps) {
+}) {
   const { setNodes } = useReactFlow();
 
   const initialTitle = (node.data as any)?.title ?? "";
-  const initialContent = (node.data as any)?.content ?? "";
-
   const [title, setTitle] = useState(initialTitle);
-  const [content, setContent] = useState(initialContent);
+
 
   const handleSave = () => {
     setNodes((prev) =>
@@ -26,7 +26,6 @@ export default function TextEditor({ onClose, node }: TextEditorProps) {
               data: {
                 ...n.data,
                 title,
-                content,
               },
             }
           : n
@@ -38,13 +37,7 @@ export default function TextEditor({ onClose, node }: TextEditorProps) {
   return (
     <div className="container mx-auto p-6 font-mono  py-12">
       <div className="flex flex-col gap-4">
-        <div className="flex w-full justify-between items-center">
-          <h1 className="text-lg font-semibold">Edit Text Node</h1>
-          <X
-            className="w-5 h-5 text-red-500/80 cursor-pointer bg-red-900/10 rounded-full"
-            onClick={onClose}
-          />
-        </div>
+        <Header headerTitle={"Edit Text Node"} onClose={onClose}/>
 
         <div className="flex flex-col space-y-6">
           <label className="flex flex-col space-y-3">

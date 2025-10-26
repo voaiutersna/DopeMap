@@ -13,7 +13,6 @@ import DeleteRoadmapModal from "./modals/DeleteRoadmapModal";
 import UnenrollModal from "./modals/UnenrollModal";
 import { HistoryType, Roadmap } from "../type";
 
-
 export default function ProfilePage() {
   const { me, loading } = useUser();
 
@@ -23,7 +22,9 @@ export default function ProfilePage() {
 
   const [editing, setEditing] = useState<Roadmap | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Roadmap | null>(null);
-  const [unenrollTarget, setUnenrollTarget] = useState<HistoryType | null>(null);
+  const [unenrollTarget, setUnenrollTarget] = useState<HistoryType | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,16 +55,31 @@ export default function ProfilePage() {
           setEditing={setEditing}
           setDeleteTarget={setDeleteTarget}
         />
-        <History
-          history={history}
-          setUnenrollTarget={setUnenrollTarget}
-        />
+        <History history={history} setUnenrollTarget={setUnenrollTarget} />
       </div>
 
       {/* MODALS  */}
-      {editing && <EditRoadmapModal editing={editing} setEditing={setEditing} />}
-      {deleteTarget && <DeleteRoadmapModal deleteTarget={deleteTarget} setDeleteTarget={setDeleteTarget} />}
-      {unenrollTarget && <UnenrollModal unenrollTarget={unenrollTarget} setUnenrollTarget={setUnenrollTarget} />}
+      {editing && (
+        <EditRoadmapModal editing={editing} setEditing={setEditing} />
+      )}
+      {deleteTarget && (
+        <DeleteRoadmapModal
+          deleteTarget={deleteTarget}
+          setDeleteTarget={setDeleteTarget}
+          removeFromRoadmaps={(id) =>
+            setRoadmaps((prev) => prev.filter((r) => r.id !== id))
+          }
+        />
+      )}
+      {unenrollTarget && (
+        <UnenrollModal
+          unenrollTarget={unenrollTarget}
+          setUnenrollTarget={setUnenrollTarget}
+          removeFromHistory={(id) =>
+            setHistory((prev) => prev.filter((h) => h.id !== id))
+          }
+        />
+      )}
     </div>
   );
 }
