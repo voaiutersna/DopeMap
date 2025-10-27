@@ -8,8 +8,6 @@ import DifficultyDropdown from "./components/DifficultyDropdown";
 import { v4 as uuidv4 } from "uuid";
 import Header from "./components/Header";
 
-
-
 export default function TaskEditor({ onClose, node }: {
   onClose: () => void;
   node: CustomNode;
@@ -92,97 +90,83 @@ export default function TaskEditor({ onClose, node }: {
   const activeTask = tasks[activeIndex];
 
   return (
-    <div className="container mx-auto min-h-[100dvh] p-6 font-mono flex flex-col gap-6 overflow-y-auto py-12">
+    <div className="container mx-auto min-h-[100dvh] p-4 sm:p-6 font-mono flex flex-col gap-6 overflow-y-auto py-8 sm:py-12">
 
-      <Header headerTitle={`Edit ${mainTitle || "Untitled Node"}`} onClose={onClose}/>
+      <Header headerTitle={`Edit ${mainTitle || "Untitled Node"}`} onClose={onClose} />
 
-      {/* Main Node Title Input */}
-      <label className="flex flex-col space-y-3">
-        <span className="text-sm text-gray-500">Main Node Title</span>
+      {/* Main Node Title */}
+      <label className="flex flex-col space-y-2 text-sm sm:text-base">
+        <span className="text-gray-500">Main Node Title</span>
         <input
           type="text"
           value={mainTitle}
           onChange={(e) => setMainTitle(e.target.value)}
           placeholder="Enter main title for this task node"
-          className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
+          className="border border-gray-500 rounded-sm px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-0"
         />
       </label>
 
       {/* Active Task Editor */}
       {activeTask && (
-        <div className="flex flex-col gap-5 mx-auto w-full">
+        <div className="flex flex-col gap-5 w-full">
           {/* Task Title */}
-          <label className="flex flex-col space-y-3">
-            <span className="text-sm text-gray-500">Task Title</span>
+          <label className="flex flex-col space-y-2 text-sm sm:text-base">
+            <span className="text-gray-500">Task Title</span>
             <input
               type="text"
               value={activeTask.title}
-              onChange={(e) =>
-                handleTaskChange(activeIndex, "title", e.target.value)
-              }
+              onChange={(e) => handleTaskChange(activeIndex, "title", e.target.value)}
               placeholder="Enter task title"
-              className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
+              className="border border-gray-500 rounded-sm px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-0"
             />
           </label>
 
           {/* Description */}
-          <label className="flex flex-col space-y-3">
-            <span className="text-sm text-gray-500">Description</span>
+          <label className="flex flex-col space-y-2 text-sm sm:text-base">
+            <span className="text-gray-500">Description</span>
             <textarea
               value={activeTask.description}
-              onChange={(e) =>
-                handleTaskChange(activeIndex, "description", e.target.value)
-              }
+              onChange={(e) => handleTaskChange(activeIndex, "description", e.target.value)}
               placeholder="Short task summary"
-              className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
+              className="border border-gray-500 rounded-sm px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-0"
             />
           </label>
 
           {/* URLs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className="flex flex-col space-y-3">
-              <span className="text-sm text-gray-500">Task URL</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm sm:text-base">
+            <label className="flex flex-col space-y-2">
+              <span className="text-gray-500">Task URL</span>
               <input
                 type="url"
                 value={activeTask.taskUrl}
-                onChange={(e) =>
-                  handleTaskChange(activeIndex, "taskUrl", e.target.value)
-                }
+                onChange={(e) => handleTaskChange(activeIndex, "taskUrl", e.target.value)}
                 placeholder="https://example.com"
-                className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
+                className="border border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
               />
             </label>
 
-            <label className="flex flex-col space-y-3">
-              <span className="text-sm text-gray-500">Solution URL</span>
+            <label className="flex flex-col space-y-2">
+              <span className="text-gray-500">Solution URL</span>
               <input
                 type="url"
                 value={activeTask.solutionUrl}
-                onChange={(e) =>
-                  handleTaskChange(activeIndex, "solutionUrl", e.target.value)
-                }
+                onChange={(e) => handleTaskChange(activeIndex, "solutionUrl", e.target.value)}
                 placeholder="https://solution.com"
-                className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
+                className="border border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0"
               />
             </label>
           </div>
 
           {/* Types */}
-          <label className="flex flex-col space-y-3">
-            <span className="text-sm text-gray-500">Types</span>
-            <div className="flex flex-wrap gap-2 border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0">
+          <label className="flex flex-col space-y-2 text-sm sm:text-base">
+            <span className="text-gray-500">Types</span>
+            <div className="flex flex-wrap gap-2 border border-gray-500 rounded-sm px-3 py-2 text-sm sm:text-base">
               {activeTask.types.map((tag, i) => (
                 <div
                   key={`${tag}-${i}`}
-                  className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-md text-sm flex items-center gap-1 hover:opacity-50 duration-200 cursor-pointer"
+                  className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-md flex items-center gap-1 cursor-pointer hover:opacity-50 duration-200"
                   onClick={() =>
-                    handleTaskChange(
-                      activeIndex,
-                      "types",
-                      activeTask.types.filter(
-                        (t, idx) => !(t === tag && idx === i)
-                      )
-                    )
+                    handleTaskChange(activeIndex, "types", activeTask.types.filter((t, idx) => !(t === tag && idx === i)))
                   }
                 >
                   {tag}
@@ -195,55 +179,40 @@ export default function TaskEditor({ onClose, node }: {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && e.currentTarget.value.trim()) {
                     const newTag = e.currentTarget.value.trim();
-
                     if (!activeTask.types.includes(newTag)) {
-                      handleTaskChange(activeIndex, "types", [
-                        ...activeTask.types,
-                        newTag,
-                      ]);
+                      handleTaskChange(activeIndex, "types", [...activeTask.types, newTag]);
                     }
-
                     e.currentTarget.value = "";
                     e.preventDefault();
                   }
                 }}
-                className="bg-transparent outline-none flex-1 min-w-[120px] text-sm text-zinc-300"
+                className="bg-transparent outline-none flex-1 min-w-[120px] text-sm sm:text-base"
               />
             </div>
           </label>
 
           {/* Difficulty + Score */}
-          <div className="flex gap-4">
-            <label className="flex flex-col space-y-3 flex-1">
-              <span className="text-sm text-gray-500">Difficulty</span>
-              <div className="flex items-center gap-2">
-                <DifficultyDropdown
-                  value={activeTask.difficult}
-                  onChange={(val) =>
-                    handleTaskChange(activeIndex, "difficult", val)
-                  }
-                />
-              </div>
+          <div className="flex flex-col md:flex-row gap-4 text-sm sm:text-base">
+            <label className="flex flex-col space-y-2 flex-1">
+              <span className="text-gray-500">Difficulty</span>
+              <DifficultyDropdown
+                value={activeTask.difficult}
+                onChange={(val) => handleTaskChange(activeIndex, "difficult", val)}
+              />
             </label>
 
-            <label className="flex flex-col space-y-3 w-48">
-              <span className="text-sm text-gray-500">Score (1–10)</span>
+            <label className="flex flex-col space-y-2 w-full md:w-48">
+              <span className="text-gray-500">Score (1–10)</span>
               <input
                 type="number"
                 min={1}
                 max={10}
-                value={
-                  activeTask.dificultScore === 0 ? "" : activeTask.dificultScore
-                }
+                value={activeTask.dificultScore === 0 ? "" : activeTask.dificultScore}
                 placeholder="(1-10)"
                 onChange={(e) =>
-                  handleTaskChange(
-                    activeIndex,
-                    "dificultScore",
-                    e.target.value === "" ? 0 : Number(e.target.value)
-                  )
+                  handleTaskChange(activeIndex, "dificultScore", e.target.value === "" ? 0 : Number(e.target.value))
                 }
-                className="border-[1px] border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0
+                className="border border-gray-500 rounded-sm px-3 py-2 focus:outline-none focus:ring-0
                 [&::-webkit-inner-spin-button]:appearance-none
                 [&::-webkit-outer-spin-button]:appearance-none
                 [-moz-appearance:textfield]"
@@ -252,16 +221,14 @@ export default function TaskEditor({ onClose, node }: {
           </div>
 
           {/* Markdown Editor */}
-          <div className="space-y-2">
-            <span className="text-sm text-zinc-400">Content (Markdown)</span>
+          <div className="space-y-2 text-sm sm:text-base">
+            <span className="text-gray-400">Content (Markdown)</span>
             <div className="rounded-md overflow-hidden border border-zinc-700 text-gray-300">
               <MdEditor
                 modelValue={activeTask.content}
-                onChange={(val) =>
-                  handleTaskChange(activeIndex, "content", val)
-                }
+                onChange={(val) => handleTaskChange(activeIndex, "content", val)}
                 language="en-US"
-                className={`markdown`}
+                className="markdown"
               />
             </div>
           </div>
@@ -274,7 +241,7 @@ export default function TaskEditor({ onClose, node }: {
           <button
             key={index}
             onClick={() => setActiveIndex(index)}
-            className={`px-3 py-1 rounded-md border text-sm cursor-pointer duration-500 ${
+            className={`px-3 py-1 rounded-md border text-sm sm:text-base cursor-pointer duration-500 ${
               index === activeIndex
                 ? "bg-blue-600/20 border-blue-500 text-blue-300"
                 : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-blue-500/50"
@@ -286,10 +253,10 @@ export default function TaskEditor({ onClose, node }: {
       </div>
 
       {/* Controls */}
-      <div className="flex gap-3 items-center justify-center">
+      <div className="flex flex-wrap gap-3 justify-center">
         <button
           onClick={addTask}
-          className="cursor-pointer flex items-center gap-1 px-5 py-2 border border-green-600/90 text-green-600 rounded-md hover:bg-green-500/10 hover:scale-105 transition-transform duration-150"
+          className="cursor-pointer flex items-center gap-1 px-5 py-2 border border-green-600/90 text-green-600 rounded-md hover:bg-green-500/10 hover:scale-105 transition-transform duration-150 text-sm sm:text-base"
         >
           <PlusCircle className="w-4 h-4" /> Add Task
         </button>
@@ -297,7 +264,7 @@ export default function TaskEditor({ onClose, node }: {
         {activeTask && (
           <button
             onClick={() => removeTask(activeIndex)}
-            className="cursor-pointer flex items-center gap-1 px-5 py-2 border border-red-600/90 text-red-600 rounded-md hover:bg-red-500/10 hover:scale-105 transition-transform duration-150"
+            className="cursor-pointer flex items-center gap-1 px-5 py-2 border border-red-600/90 text-red-600 rounded-md hover:bg-red-500/10 hover:scale-105 transition-transform duration-150 text-sm sm:text-base"
           >
             <Trash2 className="w-4 h-4" /> Delete Task
           </button>
@@ -305,7 +272,7 @@ export default function TaskEditor({ onClose, node }: {
 
         <button
           onClick={handleSave}
-          className="px-5 py-2 border border-blue-600/90 text-blue-600 rounded-md hover:bg-blue-500/10 hover:scale-105 transition-transform duration-200"
+          className="px-5 py-2 border border-blue-600/90 text-blue-600 rounded-md hover:bg-blue-500/10 hover:scale-105 transition-transform duration-200 text-sm sm:text-base"
         >
           Save All Tasks
         </button>

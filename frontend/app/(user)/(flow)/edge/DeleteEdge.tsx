@@ -3,8 +3,8 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   getSmoothStepPath,
-  useReactFlow,
   type EdgeProps,
+  useReactFlow,
 } from '@xyflow/react';
 
 interface DeleteEdgeProps extends EdgeProps {
@@ -22,6 +22,7 @@ export default function DeleteEdge({
   style = {},
   markerEnd,
   isEdit = false,
+  selected,
 }: DeleteEdgeProps) {
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
@@ -34,7 +35,9 @@ export default function DeleteEdge({
   });
 
   const { setEdges } = useReactFlow();
-  const onEdgeClick = () => {
+
+  const onEdgeClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // prevent selecting the edge again
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
   };
 
@@ -42,23 +45,30 @@ export default function DeleteEdge({
     <>
       <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
 
-      {isEdit && (
+
         <EdgeLabelRenderer>
-          <div
-            className="absolute pointer-events-auto nodrag nopan"
-            style={{
-              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            }}
-          >
-            <button
-              onClick={onEdgeClick}
-              className="w-5 h-5 border-2 border-gray-200 bg-gray-200 text-gray-800 rounded-full text-sm flex items-center justify-center hover:bg-gray-700 hover:text-white"
-            >
-              ×
-            </button>
-          </div>
+<div
+  className="absolute nodrag nopan pointer-events-auto"
+  style={{
+    left: 0,
+    top: 0,
+    transform: `translate(${labelX}px, ${labelY}px) translate(-50%, -50%)`,
+  }}
+>
+  <div
+    className={`transform transition-transform duration-300 ${
+      isEdit && selected ? "scale-100" : "scale-0"
+    }`}
+  >
+    <button
+      onClick={onEdgeClick}
+      className="w-5 h-5 bg-[#2f3131] border border-red-500 text-red-500 rounded-full text-sm flex items-center justify-center cursor-pointer"
+    >
+      ×
+    </button>
+  </div>
+</div>
         </EdgeLabelRenderer>
-      )}
     </>
   );
 }

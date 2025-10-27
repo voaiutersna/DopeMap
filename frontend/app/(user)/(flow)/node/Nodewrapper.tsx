@@ -55,16 +55,16 @@ export default function NodeWrapper({
     `}
           >
             <button
-              onClick={handleDelete}
-              className="block w-full text-left hover:bg-[#4b4f51]/30 px-2 py-1 rounded"
-            >
-              Delete Node
-            </button>
-            <button
               onClick={handleEdit}
               className="block w-full text-left hover:bg-[#4b4f51]/30 px-2 py-1 rounded"
             >
               Edit Node
+            </button>
+            <button
+              onClick={handleDelete}
+              className="block w-full text-left hover:bg-[#4b4f51]/30 px-2 py-1 rounded"
+            >
+              Delete Node
             </button>
           </div>
         </div>

@@ -33,53 +33,52 @@ export default function Toolbar({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [showAddDropdown, setShowAddDropdown] = useState(false);
 
-const addNodeAtCenterOfNodes = (type: string) => {
-  let position = { x: 0, y: 0 };
-  const nodes = getNodes()
-  if (nodes.length > 0) {
-    const total = nodes.reduce(
-      (acc, node) => {
-        acc.x += node.position.x;
-        acc.y += node.position.y;
-        return acc;
-      },
-      { x: 0, y: 0 }
-    );
+  const addNodeAtCenterOfNodes = (type: string) => {
+    let position = { x: 0, y: 0 };
+    const nodes = getNodes();
+    if (nodes.length > 0) {
+      const total = nodes.reduce(
+        (acc, node) => {
+          acc.x += node.position.x;
+          acc.y += node.position.y;
+          return acc;
+        },
+        { x: 0, y: 0 }
+      );
 
-    position = {
-      x: total.x / nodes.length,
-      y: total.y / nodes.length,
-    };
-  }
+      position = {
+        x: total.x / nodes.length,
+        y: total.y / nodes.length,
+      };
+    }
 
-  let newNode: any = { id: `${Date.now()}`, type, position };
+    let newNode: any = { id: `${Date.now()}`, type, position };
 
-  switch (type) {
-    case "note":
-      newNode.data = { ...defaultNoteNodeData };
-      break;
-    case "task":
-      newNode.data = { ...defaultTaskNodeData };
-      break;
-    case "link":
-      newNode.data = { ...defaultLinkNodeData };
-      break;
-    case "ctext":
-      newNode.data = { ...defaultTextNodeData };
-      break;
-    default:
-      return;
-  }
+    switch (type) {
+      case "note":
+        newNode.data = { ...defaultNoteNodeData };
+        break;
+      case "task":
+        newNode.data = { ...defaultTaskNodeData };
+        break;
+      case "link":
+        newNode.data = { ...defaultLinkNodeData };
+        break;
+      case "ctext":
+        newNode.data = { ...defaultTextNodeData };
+        break;
+      default:
+        return;
+    }
 
-  setNodes((nds) => nds.concat(newNode));
-  setShowAddDropdown(false);
-};
-
+    setNodes((nds) => nds.concat(newNode));
+    setShowAddDropdown(false);
+  };
 
   const handleClear = () => {
     setNodes([]);
     setEdges([]);
-    toast.info("All nodes cleared.",);
+    toast.info("All nodes cleared.");
   };
 
   const handleSaveJSON = () => {
@@ -139,84 +138,71 @@ const addNodeAtCenterOfNodes = (type: string) => {
     <>
       <Toaster />
 
-      <div className="absolute top-4 left-0 flex gap-2 bg-[#2f3131] border border-[#4b4f51] rounded-md p-2 shadow-md z-50">
-        {/* Zoom & Fit */}
-           <div className="relative">
-          <button
-            onClick={() => setShowAddDropdown((prev) => !prev)}
-            title="Add Node"
-            className="p-2 bg-[#1e1f1f] rounded-md text-white flex items-center justify-center cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
+      <div
+        className="absolute top-4
+                md:left-4 md:-translate-x-0  transform
+                left-1/2 -translate-x-1/2 flex flex-wrap gap-2  justify-center
+                bg-[#2f3131] border border-[#4b4f51] rounded-md p-2 shadow-md z-50
+                 max-w-full"
+      >
+        {/* Add Node */}
+    <div className="relative inline-block">
+      <button
+        onClick={() => setShowAddDropdown((prev) => !prev)}
+        title="Add Node"
+        className="p-2 bg-[#1e1f1f] rounded-md text-white flex items-center justify-center cursor-pointer"
+      >
+        <Plus className="w-4 h-4" />
+      </button>
 
-          {showAddDropdown && (
-            <div className="absolute top-full mt-1 right-0 w-32 bg-[#2f3131] border border-[#4b4f51] rounded-md shadow-md flex flex-col z-50">
-              {["note", "task", "link", "ctext"].map((type) => (
-                <button
-                  key={type}
-                  onClick={() => addNodeAtCenterOfNodes(type)}
-                  className="px-2 py-1 hover:bg-[#1e1f1f] text-gray-300 text-left"
-                >
-                  {type.charAt(0).toUpperCase() + type.slice(1)} Node
-                </button>
-              ))}
-            </div>
-          )}
+        <div className={`${showAddDropdown ? "scale-100 opacity-100 pointer-events-auto" : "scale-0 opacity-0 pointer-events-none"} duration-200 absolute left-0 top-full mt-1 w-32 bg-[#2f3131] border border-[#4b4f51] rounded-md shadow-md flex flex-col z-50`}>
+          {["note", "task", "link", "ctext"].map((type) => (
+            <button
+              key={type}
+              onClick={() => addNodeAtCenterOfNodes(type)}
+              className="px-2 py-1 hover:bg-[#1e1f1f] text-gray-300 text-left whitespace-nowrap"
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)} Node
+            </button>
+          ))}
         </div>
-        
-        <button
-          onClick={() => zoomIn()}
-          title="Zoom In"
-          className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer"
-        >
+    </div>
+        {/* Zoom & Fit */}
+        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomIn)}}>
           <ZoomIn className="w-4 h-4" />
         </button>
-        <button
-          onClick={() => zoomOut()}
-          title="Zoom Out"
-          className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer"
-        >
+        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomOut)}}>
           <ZoomOut className="w-4 h-4" />
         </button>
-        <button
-          onClick={() => fitView()}
-          title="Fit View"
-          className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer"
-        >
+        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(fitView)}}>
           <Maximize2 className="w-4 h-4" />
         </button>
 
         {/* Save / Load */}
         <button
+          className="p-2 bg-[#1e1f1f] rounded-md text-green-400 flex items-center justify-center cursor-pointer "
           onClick={handleSaveJSON}
-          title="Save as JSON"
-          className="p-2 bg-[#1e1f1f] rounded-md text-green-400 flex items-center justify-center cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
         <button
-          onClick={handleSaveRoadmap}
-          title="Save to Roadmap"
           className="p-2 bg-[#1e1f1f] rounded-md text-blue-400 flex items-center justify-center cursor-pointer"
+          onClick={handleSaveRoadmap}
         >
           <Database className="w-4 h-4" />
         </button>
         <button
-          onClick={handleLoadClick}
-          title="Load Flow"
           className="p-2 bg-[#1e1f1f] rounded-md text-yellow-400 flex items-center justify-center cursor-pointer"
+          onClick={handleLoadClick}
         >
           <Upload className="w-4 h-4" />
         </button>
         <button
-          onClick={handleClear}
-          title="Clear All Nodes"
           className="p-2 bg-[#1e1f1f] rounded-md text-red-400 flex items-center justify-center cursor-pointer"
+          onClick={handleClear}
         >
           <Trash2 className="w-4 h-4" />
         </button>
-
       </div>
 
       {/* Hidden file input */}

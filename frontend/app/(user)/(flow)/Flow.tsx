@@ -218,13 +218,11 @@ const edgeTypes = {
           elementsSelectable={true}
           zoomOnScroll={true}
           zoomOnPinch={true}
-          panOnScroll={true}
-          panOnDrag={true}
         >
           {/* <Controls /> */}
 
           {/* <Background /> */}
-          <div className="absolute top-2 right-2 z-50 w-48 h-48 rounded-md overflow-hidden shadow-md">
+          <div className="hidden md:block absolute top-2 right-2 z-50 w-48 h-48 rounded-md overflow-hidden shadow-md">
             <MiniMap
               nodeColor={(node) => {
                 switch (node.type) {
