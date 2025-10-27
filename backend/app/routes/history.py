@@ -2,7 +2,7 @@ from typing import Optional
 from uuid import UUID
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,status
 from sqlalchemy.orm import Session,joinedload
 from sqlalchemy import desc
 
@@ -13,13 +13,27 @@ from app.deps.dependencies import get_db, get_current_user
 router = APIRouter(prefix="/history", tags=["Roadmap History"])
 
 
-@router.post("/", response_model=APIResponse[RoadmapHistoryOut])
+@router.post("/", response_model=APIResponse[RoadmapHistoryOut], status_code=status.HTTP_201_CREATED)
 async def create_history(
     payload: RoadmapHistoryCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Map schema to SQLAlchemy model
+    existing_history = (
+        db.query(RoadmapHistory)
+        .filter(
+            RoadmapHistory.roadmap_id == payload.roadmap_id,
+            RoadmapHistory.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if existing_history:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User already has a history for this roadmap"
+        )
+
     new_history = RoadmapHistory(
         roadmap_id=payload.roadmap_id,
         user_id=current_user.id,
@@ -30,7 +44,6 @@ async def create_history(
     db.commit()
     db.refresh(new_history)
 
-    # Map model to schema for response
     history_out = RoadmapHistoryOut.from_orm(new_history)
     return APIResponse(success=True, data=history_out)
 
@@ -45,7 +58,6 @@ async def get_all_histories(
         .filter(RoadmapHistory.user_id == current_user.id)\
         .all()
 
-    # Include roadmap title/description in output
     histories_out = []
     for h in histories:
         h_out = RoadmapHistoryOut.from_orm(h)

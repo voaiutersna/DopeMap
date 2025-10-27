@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { getRoadmaps } from "../roadmap-api";
+import { getPublicRoadmaps, getRoadmaps } from "../roadmap-api";
 import { getHistory } from "../history-api";
 import { api } from "@/api";
 import { Roadmap, HistoryType } from "../type"; 
@@ -14,7 +14,7 @@ export default function MapsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const roadmaps = await getRoadmaps();
+        const roadmaps = await getPublicRoadmaps();
         const history: HistoryType[] = await getHistory();
 
         if (roadmaps && Array.isArray(roadmaps)) {

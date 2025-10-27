@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.deps.dependencies import get_db, get_current_user
-from app.models import Roadmap, User
+from app.models import Roadmap, RoadmapHistory, User
 from app.schemas import (
     RoadmapCreate,
     RoadmapUpdate,
@@ -47,6 +47,14 @@ def get_my_roadmaps(
     )
     return APIResponse(success=True, data=roadmaps)
 
+@router.get("/public", response_model=APIResponse[list[RoadmapResponse]], status_code=status.HTTP_200_OK)
+def get_public_roadmaps(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    roadmaps = db.query(Roadmap).filter(Roadmap.is_public == True).all()
+
+    return APIResponse(success=True, data=roadmaps)
 
 @router.get("/{roadmap_id}", response_model=APIResponse[RoadmapResponse], status_code=status.HTTP_200_OK)
 def get_roadmap(
@@ -54,19 +62,28 @@ def get_roadmap(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    rm = (
-        db.query(Roadmap)
+
+    roadmap = db.query(Roadmap).filter(Roadmap.id == roadmap_id).first()
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+
+    if roadmap.owner_id == current_user.id:
+        return APIResponse(success=True, data=RoadmapResponse.from_orm(roadmap))
+
+    history = (
+        db.query(RoadmapHistory)
         .filter(
-            Roadmap.id == roadmap_id,
-            Roadmap.owner_id == current_user.id
+            RoadmapHistory.roadmap_id == roadmap_id,
+            RoadmapHistory.user_id == current_user.id
         )
         .first()
     )
 
-    if not rm:
-        return APIResponse(success=False, error="No roadmap found with this ID")
+    if not history:
+        raise HTTPException(status_code=403, detail="You do not have access to this roadmap")
 
-    return APIResponse(success=True, data=rm)
+    return APIResponse(success=True, data=RoadmapResponse.from_orm(roadmap))
+
 
 
 @router.put("/{roadmap_id}", response_model=APIResponse[RoadmapResponse], status_code=status.HTTP_200_OK)
