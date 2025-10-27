@@ -52,7 +52,7 @@ export default function Toolbar({
       };
     }
 
-    let newNode: any = { id: `${Date.now()}`, type, position };
+    const newNode: any = { id: `${Date.now()}`, type, position };
 
     switch (type) {
       case "note":
