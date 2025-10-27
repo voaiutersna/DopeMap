@@ -17,6 +17,20 @@ export const getHistory = async () => {
     }
 }
 
+export const getHistoryByRoadmapId = async (roadmapId: string) => {
+  try {
+    const res = await api.get<APIResponse<HistoryType>>(`/history/by_roadmap/${roadmapId}`);
+    if (res.data.success) {
+      return res.data.data;
+    } else {
+      return null;
+    }
+  } catch (e) {
+    console.error("error:", e);
+    return null;
+  }
+};
+
 export const getHistoryById = async (historyId: string) => {
     try {
         const res = await api.get<APIResponse<HistoryType>>(`/history/${historyId}`)

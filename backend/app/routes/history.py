@@ -4,8 +4,9 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session,joinedload
+from sqlalchemy import desc
 
-from app.schemas import APIResponse, RoadmapHistoryOut, RoadmapHistoryCreate
+from app.schemas import APIResponse, RoadmapHistoryOut, RoadmapHistoryCreate, RoadmapHistoryUpdate
 from app.models import RoadmapHistory, User
 from app.deps.dependencies import get_db, get_current_user
 
@@ -80,7 +81,7 @@ async def get_history(
 @router.put("/{history_id}", response_model=APIResponse[RoadmapHistoryOut])
 async def update_history(
     history_id: UUID,
-    payload: RoadmapHistoryCreate,  # Could also use a RoadmapHistoryUpdate schema
+    payload: RoadmapHistoryUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -92,12 +93,33 @@ async def update_history(
     if not history:
         raise HTTPException(status_code=404, detail="History not found")
 
-    # Map schema to model
-    history.task_history = payload.task_history or history.task_history
+    new_data = payload.model_dump(exclude_unset=True)
+
+    if "task_history" in new_data:
+        history.task_history = new_data["task_history"]
+
     db.commit()
     db.refresh(history)
 
+    return APIResponse(success=True, data=RoadmapHistoryOut.from_orm(history))
+
+
+@router.get("/by_roadmap/{roadmap_id}", response_model=APIResponse[RoadmapHistoryOut])
+async def get_history_by_roadmap(
+    roadmap_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    history = db.query(RoadmapHistory).filter(
+        RoadmapHistory.roadmap_id == roadmap_id,
+        RoadmapHistory.user_id == current_user.id
+    ).order_by(desc(RoadmapHistory.enrolled_at)).first()
+
+    if not history:
+        raise HTTPException(status_code=404, detail="No history found for this roadmap")
+
     history_out = RoadmapHistoryOut.from_orm(history)
+
     return APIResponse(success=True, data=history_out)
 
 

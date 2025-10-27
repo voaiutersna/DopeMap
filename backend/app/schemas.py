@@ -50,20 +50,17 @@ class TaskStatus(BaseModel):
     isdone: bool = False
     isStar: bool = False
 
-# ใช้ทุกอัน
 class RoadmapHistoryBase(BaseModel):
     roadmap_id: UUID
-    task_history: Dict[str, Dict[str, TaskStatus]] = {}
+    task_history: Dict[str, TaskStatus] = {}
 
-# ไว้สร้าง
 class RoadmapHistoryCreate(RoadmapHistoryBase):
     pass
 
-# ไว้ ีupdate
 class RoadmapHistoryUpdate(BaseModel):
-    task_history: Dict[str, Dict[str, TaskStatus]]
+    roadmap_id: Optional[UUID] = None
+    task_history: Optional[Dict[str, TaskStatus]] = None
 
-# ไว้ return
 class RoadmapHistoryOut(RoadmapHistoryBase):
     id: UUID
     user_id: UUID
@@ -71,9 +68,8 @@ class RoadmapHistoryOut(RoadmapHistoryBase):
     roadmap_title: str = ""
     roadmap_description: str = ""
 
-    model_config = {
-        "from_attributes": True
-    }
+    class Config:
+        from_attributes = True
 
 
 class RoadmapBase(BaseModel):

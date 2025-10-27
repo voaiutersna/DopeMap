@@ -41,6 +41,7 @@ import {
 } from "./defaultNodeData";
 import { CustomNode } from "./type";
 import DeleteEdge from "./edge/DeleteEdge";
+import { HistoryType, Roadmap } from "../type";
 
 const getId = () => `${uuidv4()}`;
 
@@ -48,10 +49,12 @@ const DnDFlow = ({
   isEdit,
   roadmapId,
   initialData,
+  historyData
 }: {
   isEdit?: boolean;
-  roadmapId: any;
-  initialData?: any;
+  roadmapId: string;
+  initialData?: Roadmap | null;
+  historyData? : HistoryType | null;
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -77,10 +80,10 @@ const edgeTypes = {
     task: (props: any) =>
       isEdit ? (
         <NodeWrapper id={props.id} setEditNodeId={setEditNodeId}>
-          <TaskNode {...props} />
+          <TaskNode {...props}/>
         </NodeWrapper>
       ) : (
-        <TaskNode {...props} />
+        <TaskNode {...props} historyData={historyData}/>
       ),
 
     link: (props: any) =>
@@ -104,7 +107,7 @@ const edgeTypes = {
 
   useEffect(() => {
     if (
-      initialData.roadmap_data &&
+      initialData?.roadmap_data &&
       (initialData.roadmap_data.nodes || initialData.roadmap_data.edges)
     ) {
       setNodes(initialData.roadmap_data.nodes || []);
@@ -210,7 +213,6 @@ const edgeTypes = {
           snapToGrid={true}
           snapGrid={[20, 20]}
           minZoom={0.5}
-          maxZoom={2}
           nodesDraggable={isEdit}
           nodesConnectable={isEdit}
           elementsSelectable={true}
@@ -277,10 +279,12 @@ export default ({
   isEdit,
   roadmapId,
   initialData,
+  historyData
 }: {
   isEdit?: boolean;
-  roadmapId: any;
-  initialData?: any;
+  roadmapId: string;
+  initialData?: Roadmap | null;
+  historyData?: HistoryType | null
 }) => (
   <ReactFlowProvider>
     <DnDProvider>
@@ -288,6 +292,7 @@ export default ({
         isEdit={isEdit}
         roadmapId={roadmapId}
         initialData={initialData}
+        historyData={historyData}
       />
     </DnDProvider>
   </ReactFlowProvider>

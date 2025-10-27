@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sheet,
   SheetTrigger,
@@ -13,58 +15,83 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { useState } from "react";
-import { TaskNodeData } from "../type";
 import { MdPreview } from "md-editor-rt";
 import { Star, ExternalLink, ChevronDown } from "lucide-react";
+import { api } from "@/api";
+import { TaskNodeData } from "../type";
+import { HistoryType, TaskHistory } from "../../type";
 
-type TaskHistory = {
-  [taskId: string]: {
-    isdone: boolean;
-    isStar: boolean;
-  };
-};
 
 export default function TaskSheet({
   data,
-  history,
+  historyData,
 }: {
   data: TaskNodeData;
-  history?: TaskHistory;
+  historyData?: HistoryType | null;
 }) {
   const [open, setOpen] = useState(false);
 
-  const [taskHistory, setTaskHistory] = useState<TaskHistory>(() => {
-    const initial: TaskHistory = {};
-    data.tasks?.forEach((task) => {
-      initial[task.id] = {
-        isdone: history?.[task.id]?.isdone || false,
-        isStar: history?.[task.id]?.isStar || false,
+
+  const tasks = data.tasks ?? [];
+
+  const [taskHistory, setTaskHistory] = useState<TaskHistory>(
+    historyData?.task_history
+      ? { ...historyData.task_history }
+      : (() => {
+          const initial: TaskHistory = {};
+          tasks.forEach((task) => {
+            initial[task.id] = { isdone: false, isStar: false };
+          });
+          return initial;
+        })()
+  );
+
+  const saveHistory = async (updated: TaskHistory) => {
+    console.log(updated)
+    if (!historyData?.id) return;
+    try {
+      const payload = {
+        task_history: updated, // ensures pure JSON
       };
+      await api.put(`/history/${historyData.id}`, payload);
+    } catch (error) {
+      console.error("Failed to update task history", error);
+    }
+  };
+
+    const toggleDone = (taskId: string) => {
+    setTaskHistory((prev) => {
+        const prevTask = prev[taskId] ?? { isdone: false, isStar: false };
+        const updated = {
+        ...prev,
+        [taskId]: { ...prevTask, isdone: !prevTask.isdone },
+        };
+        saveHistory(updated);
+        return updated;
     });
-    return initial;
-  });
+    };
 
-  const toggleDone = (taskId: string) => {
-    setTaskHistory((prev) => ({
-      ...prev,
-      [taskId]: { ...prev[taskId], isdone: !prev[taskId].isdone },
-    }));
-  };
 
-  const toggleStar = (taskId: string) => {
-    setTaskHistory((prev) => ({
-      ...prev,
-      [taskId]: { ...prev[taskId], isStar: !prev[taskId].isStar },
-    }));
-  };
+    const toggleStar = (taskId: string) => {
+    setTaskHistory((prev) => {
+        const prevTask = prev[taskId] ?? { isdone: false, isStar: false };
+        const updated = {
+        ...prev,
+        [taskId]: { ...prevTask, isStar: !prevTask.isStar },
+        };
+        saveHistory(updated);
+        return updated;
+    });
+    };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="w-full p-2 mt-2 text-gray-300 font-mono bg-transparent text-xs cursor-pointer transition-colors">
+        <button className="w-full p-2 mt-2 text-gray-300 font-mono bg-transparent text-xs cursor-pointer transition-colors hover:text-white">
           View Tasks
         </button>
       </SheetTrigger>
+
       <SheetContent
         side="right"
         className="min-w-full bg-[#1a1b1c] text-gray-300 border-l border-[#3a3d3f] rounded-none shadow-xl"
@@ -80,16 +107,16 @@ export default function TaskSheet({
         </SheetHeader>
 
         {/* Content */}
-        <div className="w-full min-h-[100-dvh] flex flex-col justify-center items-center overflow-y-auto py-5">
+        <div className="w-full min-h-[100dvh] flex flex-col justify-center items-center overflow-y-auto py-5">
           <div className="w-full h-full px-8 py-6 overflow-y-auto space-y-4 container">
-            {!data.tasks ? (
+            {tasks.length === 0 ? (
               <p className="text-gray-500 text-base italic text-center py-10">
                 No tasks available.
               </p>
             ) : (
               <Accordion type="multiple" className="space-y-4">
-                {data.tasks.map((task, i) => {
-                  const history = taskHistory[task.id] || {
+                {tasks.map((task, i) => {
+                  const historyState = taskHistory[task.id] || {
                     isdone: false,
                     isStar: false,
                   };
@@ -103,14 +130,18 @@ export default function TaskSheet({
                       <AccordionTrigger className="flex justify-between items-center w-full px-5 py-4 text-left text-gray-300 rounded-t-xl">
                         <div className="flex items-center gap-3">
                           <button
-                            onClick={() => toggleDone(task.id)}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDone(task.id);
+                            }}
                             className={`w-5 h-5 flex items-center justify-center rounded-full border-2 border-gray-600 transition-colors ${
-                              history.isdone
+                              historyState.isdone
                                 ? "bg-green-500 border-green-500"
                                 : "bg-[#1e1f1f]"
                             }`}
                           >
-                            {history.isdone && (
+                            {historyState.isdone && (
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="w-3 h-3 text-white"
@@ -145,14 +176,17 @@ export default function TaskSheet({
                                 : "text-gray-300"
                             }`}
                           >
-                            {task.difficult || "—"} ({task.dificultScore || 0}
-                            /10)
+                            {task.difficult || "—"} ({task.dificultScore ?? 0}/10)
                           </span>
 
                           <button
-                            onClick={() => toggleStar(task.id)}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleStar(task.id);
+                            }}
                             className={`w-6 h-6 flex items-center justify-center transition-colors rounded-full hover:bg-yellow-500/20 ${
-                              history.isStar
+                              historyState.isStar
                                 ? "text-yellow-400"
                                 : "text-gray-600"
                             }`}
@@ -177,7 +211,7 @@ export default function TaskSheet({
                           </div>
                         )}
 
-                        {/* Markdown */}
+                        {/* Markdown content */}
                         {task.content && (
                           <div className="space-y-3">
                             <h3 className="text-gray-400 text-sm uppercase tracking-wider">
@@ -199,9 +233,9 @@ export default function TaskSheet({
                           <h3 className="text-gray-400 text-sm uppercase tracking-wider">
                             Types
                           </h3>
-                          {task.types?.length > 0 ? (
+                          {task.types?.length ? (
                             <div className="flex flex-wrap gap-2">
-                              {task.types.map((type, idx) => (
+                              {task.types.map((type: string, idx: number) => (
                                 <span
                                   key={idx}
                                   className="text-sm bg-blue-500/10 text-blue-300 px-3 py-1.5 rounded-md border border-blue-500/30"
@@ -228,7 +262,7 @@ export default function TaskSheet({
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2"
                               >
-                                <div className="w-10 h-10 flex items-center justify-center rounded-full  text-gray-300 border border-gray-600 hover:bg-gray-600 transition">
+                                <div className="w-10 h-10 flex items-center justify-center rounded-full text-gray-300 border border-gray-600 hover:bg-gray-600 transition">
                                   <ExternalLink className="w-4 h-4" />
                                 </div>
                                 <span className="text-gray-400 text-sm">
@@ -243,7 +277,7 @@ export default function TaskSheet({
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2"
                               >
-                                <div className="w-10 h-10 flex items-center justify-center rounded-full  text-gray-300 border border-gray-600 hover:bg-gray-600 transition">
+                                <div className="w-10 h-10 flex items-center justify-center rounded-full text-gray-300 border border-gray-600 hover:bg-gray-600 transition">
                                   <ExternalLink className="w-4 h-4" />
                                 </div>
                                 <span className="text-gray-400 text-sm">

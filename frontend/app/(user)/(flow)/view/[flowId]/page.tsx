@@ -6,7 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@/app/layout";
 import { getRoadmapById } from "@/app/(user)/roadmap-api";
 import Loading from "@/components/Loading";
-import { Roadmap } from "@/app/(user)/type";
+import { HistoryType, Roadmap } from "@/app/(user)/type";
+import { getHistory, getHistoryById, getHistoryByRoadmapId } from "@/app/(user)/history-api";
 
 export default function ViewPage() {
   const { me, loading: userLoading } = useUser();
@@ -15,7 +16,7 @@ export default function ViewPage() {
   const roadmapId = params.flowId as string;
 
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
-  const [history, setHistory] = useState<History | null>(null);
+  const [history, setHistory] = useState<HistoryType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,14 +24,16 @@ export default function ViewPage() {
       try {
         if (!roadmapId || userLoading) return;
 
-        const res = await getRoadmapById(roadmapId);
+        const rm = await getRoadmapById(roadmapId);
+        const h = await getHistoryByRoadmapId(roadmapId);
 
-        if (res == null) {
+        if (rm == null || h == null) {
           router.push("/profile");
           return;
         }
 
-        setRoadmap(res);
+        setRoadmap(rm);
+        setHistory(h);
       } catch (err) {
         console.error("Failed to fetch roadmap:", err);
         router.push("/profile");
@@ -49,7 +52,7 @@ export default function ViewPage() {
   return (
     <div className="flex w-full h-full">
       <div className="flex-1">
-        <Flow isEdit={false} roadmapId={roadmapId} initialData={roadmap} />
+        <Flow isEdit={false} roadmapId={roadmapId} initialData={roadmap} historyData={history}/>
       </div>
     </div>
   );
