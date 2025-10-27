@@ -189,7 +189,7 @@ const edgeTypes = {
   };
 
   return (
-    <div className="dndflow flex w-full h-[calc(100vh-56px)]  relative  justify-center">
+    <div className="dndflow flex w-full h-[calc(100vh-104px)]  relative  justify-center">
       {isEdit && (
         <div className="container absolute top-4 left-0-translate-x-1/2">
           <Toolbar roadmapId={roadmapId} initialData={initialData} />

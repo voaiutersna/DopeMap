@@ -47,7 +47,7 @@ export default function ProfilePage() {
   if (loading || loadingData) return <Loading />;
 
   return (
-    <div className="bg-[#2f3131] flex flex-col items-center min-h-[calc(100vh-56px)] font-mono text-zinc-200">
+    <div className="bg-[#2f3131] flex flex-col items-center min-h-[calc(100vh-104px)] font-mono text-zinc-200">
       <div className="container w-full flex flex-col py-12 space-y-8">
         <UserInfo me={me} setEditing={setEditing} />
         <Roadmaps

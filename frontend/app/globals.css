@@ -134,4 +134,9 @@
     -webkit-box-shadow: 0 0 0px 1000px #27272a inset !important;
     -webkit-text-fill-color: #e4e4e7 !important;
   }
+  /* lazy reposive i am genius */
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
 }

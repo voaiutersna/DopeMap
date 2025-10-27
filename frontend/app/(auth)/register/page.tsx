@@ -52,7 +52,7 @@ export default function RegisterPage() {
   return (
     <>
      <Toaster/>
-      <div className="bg-[#2f3131] flex flex-col items-center justify-center h-[calc(100vh-56px)] font-mono text-zinc-200">
+      <div className="bg-[#2f3131] flex flex-col items-center justify-center h-[calc(100vh-104px)] font-mono text-zinc-200">
         <div className="container flex flex-col justify-center items-center h-full space-y-5">
           <h1 className="text-2xl font-semibold text-start">Register</h1>
 

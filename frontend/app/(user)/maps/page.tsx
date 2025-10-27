@@ -75,7 +75,7 @@ export default function MapsPage() {
   );
 
   return (
-    <div className="bg-[#2f3131] min-h-[calc(100vh-56px)] text-zinc-200 font-mono flex flex-col items-center">
+    <div className="bg-[#2f3131] min-h-[calc(100vh-104px)] text-zinc-200 font-mono flex flex-col items-center">
       <div className="container w-full py-12 px-4 flex flex-col gap-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
