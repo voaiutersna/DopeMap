@@ -150,5 +150,7 @@ watchfiles==1.1.1
 wcwidth==0.2.13
 webcolors==24.6.0
 webencodings==0.5.1
-websocket-client==0.56.0
+# websocket-client==0.56.0
+# vercel เอ๋ออ
+websocket-client>=0.56.0,<1.0.0
 websockets==15.0.1
