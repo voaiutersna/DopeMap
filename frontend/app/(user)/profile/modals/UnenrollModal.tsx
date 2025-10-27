@@ -19,7 +19,7 @@ export default function UnenrollModal({
 }: Props) {
   const handleUnenroll = async () => {
     try {
-      const res = await api.delete(`/history/${unenrollTarget.roadmap_id}`);
+      const res = await api.delete(`/history/${unenrollTarget.id}`);
       if (res.data.success) {
         removeFromHistory(unenrollTarget.id);
         setUnenrollTarget(null);
