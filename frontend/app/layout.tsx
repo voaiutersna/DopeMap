@@ -10,16 +10,10 @@ import "./markdown.css";
 import { getMe } from "./(user)/user-api";
 import Loading from "@/components/Loading";
 import { useRouter } from "next/navigation";
+import { User } from "./(user)/type";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  created_at: string;
-}
 
 interface UserContextValue {
   me: User | null;
