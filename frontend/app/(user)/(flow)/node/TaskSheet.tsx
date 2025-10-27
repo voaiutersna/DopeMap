@@ -75,7 +75,7 @@ export default function TaskSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="w-full p-2 mt-2 text-gray-300 font-mono bg-transparent text-xs sm:text-sm md:text-base cursor-pointer transition-colors hover:text-white">
+        <button className="w-full p-2 mt-2 text-gray-300 font-mono bg-transparent text-sm  cursor-pointer transition-colors hover:text-white">
           View Tasks
         </button>
       </SheetTrigger>
