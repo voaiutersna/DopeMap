@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 interface Props {
   unenrollTarget: HistoryType;
   setUnenrollTarget: React.Dispatch<React.SetStateAction<HistoryType | null>>;
-  removeFromHistory: (id: string) => void; // <-- new prop
+  removeFromHistory: (id: string) => void;
 }
 
 export default function UnenrollModal({
@@ -19,10 +19,10 @@ export default function UnenrollModal({
 }: Props) {
   const handleUnenroll = async () => {
     try {
-      const res = await api.delete(`/enroll/${unenrollTarget.roadmap_id}`);
+      const res = await api.delete(`/history/${unenrollTarget.roadmap_id}`);
       if (res.data.success) {
-        removeFromHistory(unenrollTarget.id); // <-- remove immediately from list
-        setUnenrollTarget(null); // close modal
+        removeFromHistory(unenrollTarget.id);
+        setUnenrollTarget(null);
       }
     } catch (err: unknown) {
       console.error("err", err);
