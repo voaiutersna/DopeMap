@@ -21,6 +21,7 @@ import {
   useReactFlow,
   MiniMap,
   Connection,
+  EdgeProps,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import TaskNode from "./node/TaskNode";
@@ -57,15 +58,14 @@ const DnDFlow = ({
   historyData? : HistoryType | null;
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [editNodeId, setEditNodeId] = useState<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
 
 
 const edgeTypes = {
-  delete: (props: any) => <DeleteEdge {...props} isEdit={isEdit} />,
+  delete: (props: EdgeProps) => <DeleteEdge {...props} isEdit={isEdit} />,
 };
-
 
   const nodeTypes = {
     note: (props: any) =>

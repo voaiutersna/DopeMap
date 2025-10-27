@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { api, APIResponse } from "@/api";
 import { toast } from "react-toastify";
 import Toaster from "@/components/Toaster";
+import { AxiosError } from "axios";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -39,9 +40,10 @@ export default function RegisterPage() {
           type: "error",
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as AxiosError<{ detail: string }>; // type the response data
       toast.update(toastId, {
-        render: err.response?.data?.detail || "Registration failed",
+        render: error.response?.data?.detail || "Registration failed",
         type: "error",
       });
     } finally {

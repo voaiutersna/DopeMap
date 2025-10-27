@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api, APIResponse } from "@/api";
 import { toast } from "react-toastify";
 import Toaster from "@/components/Toaster";
+import { AxiosError } from "axios";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -49,9 +50,10 @@ export default function SignInPage() {
           type: "error",
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as AxiosError<{ detail: string }>;
       toast.update(toastId, {
-        render: err.response?.data?.detail || "Login failed",
+        render: error.response?.data?.detail || "Login failed",
         type: "error",
       });
     } finally {

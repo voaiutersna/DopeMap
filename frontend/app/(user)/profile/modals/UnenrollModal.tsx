@@ -25,12 +25,12 @@ export default function UnenrollModal({
         setUnenrollTarget(null); // close modal
       }
     } catch (err: unknown) {
-      console.error("Failed to delete roadmap", err);
+      console.error("err", err);
 
       if (err instanceof Error) {
-        toast.error(err.message || "Failed to delete roadmap");
+        toast.error(err.message || "Failed to unenroll roadmap");
       } else {
-        toast.error("Failed to delete roadmap");
+        toast.error("Failed to unenroll roadmap");
       }
     }
   };

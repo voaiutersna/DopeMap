@@ -24,12 +24,12 @@ export default function EditRoadmapModal({ editing, setEditing }: Props) {
         setEditing(null);
       }
     } catch (err: unknown) {
-          console.error("Failed to delete roadmap", err);
+          console.error("Failed to edit roadmap", err);
     
           if (err instanceof Error) {
-            toast.error(err.message || "Failed to delete roadmap");
+            toast.error(err.message || "Failed to edit roadmap");
           } else {
-            toast.error("Failed to delete roadmap");
+            toast.error("Failed to edit roadmap");
           }
         }
   };
