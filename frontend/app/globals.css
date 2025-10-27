@@ -139,4 +139,15 @@
     @apply mx-auto px-8 sm:px-10 lg:px-12;
   }
 
+  /* reactflow if display none will get copyright if not pro subscription */
+  .react-flow__attribution {
+    @apply !bg-transparent backdrop-blur-md rounded-xl px-3 py-1 shadow-sm transition-all duration-300;
+  }
+
+  a[aria-label="React Flow attribution"] {
+    @apply !text-gray-300 font-mono tracking-wide hover:text-gray-700 no-underline select-none;
+    user-drag: none; 
+  }
+
+
 }
