@@ -74,8 +74,8 @@ export default function TaskSheet({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-        <button className="w-full p-2 mt-2 text-gray-300 font-mono bg-transparent text-xs md:text-sm cursor-pointer transition-colors hover:text-white">
+      <SheetTrigger asChild>
+        <button className="w-full p-2 mt-2 text-gray-300 font-mono bg-transparent text-xs sm:text-sm md:text-base cursor-pointer transition-colors hover:text-white">
           View Tasks
         </button>
       </SheetTrigger>
@@ -95,7 +95,7 @@ export default function TaskSheet({
         </SheetHeader>
 
         {/* Scrollable Content */}
-        <div className="flex-1 px-4 py-10 container overflow-y-auto space-y-4">
+        <div className="flex-1 px-4 py-10 container overflow-y-auto space-y-4 ">
           {tasks.length === 0 ? (
             <p className="text-gray-500 text-xs sm:text-sm md:text-base italic text-center py-10">
               No tasks available.
@@ -135,6 +135,18 @@ export default function TaskSheet({
                             </svg>
                           )}
                         </button>
+                                                <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleStar(task.id);
+                          }}
+                          className={`w-6 h-6 flex items-center justify-center transition-colors rounded-full hover:bg-yellow-500/20 cursor-pointer ${
+                            historyState.isStar ? "text-yellow-400" : "text-gray-600"
+                          }`}
+                        >
+                          <Star className="w-5 h-5" />
+                        </button>
                         <span className="text-sm sm:text-base">{task.title || `Task ${i + 1}`}</span>
                       </div>
 
@@ -153,20 +165,7 @@ export default function TaskSheet({
                           {task.difficult || "—"} ({task.dificultScore ?? 0}/10)
                         </span>
 
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleStar(task.id);
-                          }}
-                          className={`w-6 h-6 flex items-center justify-center transition-colors rounded-full hover:bg-yellow-500/20 cursor-pointer ${
-                            historyState.isStar ? "text-yellow-400" : "text-gray-600"
-                          }`}
-                        >
-                          <Star className="w-5 h-5" />
-                        </button>
-
-                        <ChevronDown className="w-5 h-5 text-gray-400 transition-transform duration-200 accordion-chevron" />
+                        <ChevronDown className="w-5 h-5 text-gray-400 transition-transform duration-200 accordion-chevron hidden sm:block" />
                       </div>
                     </AccordionTrigger>
 

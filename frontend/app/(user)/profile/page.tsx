@@ -44,12 +44,21 @@ export default function ProfilePage() {
     if (!loading) fetchData();
   }, [loading]);
 
+  const updateRoadmapInState = (updated: Roadmap) => {
+  setRoadmaps((prev) =>
+    prev.map((r) => (r.id === updated.id ? updated : r))
+  );
+};
+
+
   if (loading || loadingData) return <Loading />;
 
   return (
     <div className="bg-[#2f3131] flex flex-col items-center min-h-[calc(100vh-104px)] font-mono text-zinc-200">
       <div className="container w-full flex flex-col py-12 space-y-8">
-        <UserInfo me={me} setEditing={setEditing} />
+        <UserInfo me={me} setEditing={setEditing}   addRoadmap={(newRoadmap) =>
+    setRoadmaps((prev) => [newRoadmap, ...prev])
+  }/>
         <Roadmaps
           roadmaps={roadmaps}
           setEditing={setEditing}
@@ -60,7 +69,7 @@ export default function ProfilePage() {
 
       {/* MODALS  */}
       {editing && (
-        <EditRoadmapModal editing={editing} setEditing={setEditing} />
+        <EditRoadmapModal editing={editing} setEditing={setEditing} updateRoadmapInState={updateRoadmapInState}/>
       )}
       {deleteTarget && (
         <DeleteRoadmapModal

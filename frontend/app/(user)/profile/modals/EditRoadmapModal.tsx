@@ -9,30 +9,30 @@ import Toaster from "@/components/Toaster";
 interface Props {
   editing: Roadmap;
   setEditing: React.Dispatch<React.SetStateAction<Roadmap | null>>;
+  updateRoadmapInState: (updated: Roadmap) => void;
 }
-
-export default function EditRoadmapModal({ editing, setEditing }: Props) {
+export default function EditRoadmapModal({ editing, setEditing,updateRoadmapInState }: Props) {
+  
   const saveEdit = async () => {
-    try {
-      const payload = {
-        title: editing.title,
-        description: editing.description,
-        is_public: editing.is_public,
-      };
-      const res = await api.put(`/roadmaps/${editing.id}`, payload);
-      if (res.data.success) {
-        setEditing(null);
-      }
-    } catch (err: unknown) {
-          console.error("Failed to edit roadmap", err);
-    
-          if (err instanceof Error) {
-            toast.error(err.message || "Failed to edit roadmap");
-          } else {
-            toast.error("Failed to edit roadmap");
-          }
-        }
-  };
+  try {
+    const payload = {
+      title: editing.title,
+      description: editing.description,
+      is_public: editing.is_public,
+    };
+    const res = await api.put(`/roadmaps/${editing.id}`, payload);
+    const updatedRoadmap: Roadmap = res.data.data || res.data;
+
+    // Update the roadmap in the parent state
+    updateRoadmapInState(updatedRoadmap);
+
+    setEditing(null);
+    toast.success("Roadmap updated successfully!");
+  } catch (err: any) {
+    console.error("Failed to edit roadmap", err);
+    toast.error(err.response?.data?.detail || err.message || "Failed to edit roadmap");
+  }
+};
 
   return (
     <>

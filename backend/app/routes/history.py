@@ -47,7 +47,6 @@ async def create_history(
     history_out = RoadmapHistoryOut.from_orm(new_history)
     return APIResponse(success=True, data=history_out)
 
-
 @router.get("/", response_model=APIResponse[list[RoadmapHistoryOut]])
 async def get_all_histories(
     db: Session = Depends(get_db),
@@ -56,6 +55,7 @@ async def get_all_histories(
     histories = db.query(RoadmapHistory)\
         .options(joinedload(RoadmapHistory.roadmap))\
         .filter(RoadmapHistory.user_id == current_user.id)\
+        .order_by(desc(RoadmapHistory.enrolled_at))\
         .all()
 
     histories_out = []

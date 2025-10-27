@@ -8,9 +8,10 @@ import { api } from "@/api";
 interface Props {
   me: User | null;
   setEditing: React.Dispatch<React.SetStateAction<Roadmap | null>>;
+  addRoadmap: (newRoadmap: Roadmap) => void;
 }
 
-export default function UserInfo({ me, setEditing }: Props) {
+export default function UserInfo({ me, setEditing,addRoadmap}: Props) {
   const createRoadmap = async () => {
     try {
       const payload = {
@@ -21,7 +22,9 @@ export default function UserInfo({ me, setEditing }: Props) {
       };
       const res = await api.post("/roadmaps/", payload);
       if (res.data.success) {
-        setEditing(res.data.data);
+        const newRoadmap: Roadmap = res.data.data;
+        addRoadmap(newRoadmap);
+        setEditing(newRoadmap);
       }
     } catch (err: any) {
       console.error("Failed to create roadmap", err);

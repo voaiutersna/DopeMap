@@ -1,5 +1,6 @@
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.deps.dependencies import get_db, get_current_user
@@ -43,17 +44,23 @@ def get_my_roadmaps(
     roadmaps = (
         db.query(Roadmap)
         .filter(Roadmap.owner_id == current_user.id)
+        .order_by(desc(Roadmap.created_at)) 
         .all()
     )
     return APIResponse(success=True, data=roadmaps)
+
 
 @router.get("/public", response_model=APIResponse[list[RoadmapResponse]], status_code=status.HTTP_200_OK)
 def get_public_roadmaps(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    roadmaps = db.query(Roadmap).filter(Roadmap.is_public == True).all()
-
+    roadmaps = (
+        db.query(Roadmap)
+        .filter(Roadmap.is_public == True)
+        .order_by(desc(Roadmap.created_at))  
+        .all()
+    )
     return APIResponse(success=True, data=roadmaps)
 
 @router.get("/{roadmap_id}", response_model=APIResponse[RoadmapResponse], status_code=status.HTTP_200_OK)
