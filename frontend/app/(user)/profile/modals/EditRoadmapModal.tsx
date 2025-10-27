@@ -3,6 +3,8 @@
 import React from "react";
 import { Roadmap } from "../../type";
 import { api } from "@/api";
+import { toast } from "react-toastify";
+import Toaster from "@/components/Toaster";
 
 interface Props {
   editing: Roadmap;
@@ -21,12 +23,20 @@ export default function EditRoadmapModal({ editing, setEditing }: Props) {
       if (res.data.success) {
         setEditing(null);
       }
-    } catch (err: any) {
-      console.error("Failed to update roadmap", err);
-    }
+    } catch (err: unknown) {
+          console.error("Failed to delete roadmap", err);
+    
+          if (err instanceof Error) {
+            toast.error(err.message || "Failed to delete roadmap");
+          } else {
+            toast.error("Failed to delete roadmap");
+          }
+        }
   };
 
   return (
+    <>
+    <Toaster/>
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={() => setEditing(null)} />
       <div className="relative bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-lg z-10">
@@ -88,5 +98,6 @@ export default function EditRoadmapModal({ editing, setEditing }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }

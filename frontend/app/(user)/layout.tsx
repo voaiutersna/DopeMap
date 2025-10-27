@@ -11,7 +11,7 @@ export default function UserLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!loading && !me) {
-      router.push("/signin"); 
+      router.push("/signin");
     }
   }, [loading, me, router]);
 

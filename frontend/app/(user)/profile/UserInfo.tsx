@@ -2,11 +2,11 @@
 
 import React from "react";
 import SignOut from "@/components/Signout";
-import { Roadmap } from "../type";
+import { Roadmap, User } from "../type";
 import { api } from "@/api";
 
 interface Props {
-  me: any;
+  me: User | null;
   setEditing: React.Dispatch<React.SetStateAction<Roadmap | null>>;
 }
 
