@@ -3,6 +3,7 @@ import React from "react";
 import { LogIn, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/app/layout";
+import Link from "next/link";
 
 export default function Navbar() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function Navbar() {
       </h1>
       <p
         className={`text-sm sm:text-base cursor-pointer ${textColor}`}
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/about")}
       >
         About
       </p>
