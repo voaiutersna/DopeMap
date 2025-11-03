@@ -168,13 +168,13 @@ export default function Toolbar({
         </div>
     </div>
         {/* Zoom & Fit */}
-        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomIn)}}>
+        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomIn())}}>
           <ZoomIn className="w-4 h-4" />
         </button>
-        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomOut)}}>
+        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomOut())}}>
           <ZoomOut className="w-4 h-4" />
         </button>
-        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(fitView)}}>
+        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(fitView())}}>
           <Maximize2 className="w-4 h-4" />
         </button>
 
