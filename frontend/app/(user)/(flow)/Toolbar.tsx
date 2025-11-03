@@ -168,37 +168,37 @@ export default function Toolbar({
         </div>
     </div>
         {/* Zoom & Fit */}
-        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomIn())}}>
+        <button className="p-2 bg-[#1e1f1f] hover:bg-gray-400 rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomIn())}}>
           <ZoomIn className="w-4 h-4" />
         </button>
-        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomOut())}}>
+        <button className="p-2 bg-[#1e1f1f] hover:bg-gray-400 rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(zoomOut())}}>
           <ZoomOut className="w-4 h-4" />
         </button>
-        <button className="p-2 bg-[#1e1f1f] rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(fitView())}}>
+        <button className="p-2 bg-[#1e1f1f] hover:bg-gray-400 rounded-md text-gray-300 flex items-center justify-center cursor-pointer" onClick={()=>{(fitView())}}>
           <Maximize2 className="w-4 h-4" />
         </button>
 
         {/* Save / Load */}
         <button
-          className="p-2 bg-[#1e1f1f] rounded-md text-green-400 flex items-center justify-center cursor-pointer "
+          className="p-2 bg-[#1e1f1f] hover:bg-gray-400 rounded-md text-green-400 flex items-center justify-center cursor-pointer "
           onClick={handleSaveJSON}
         >
           <Save className="w-4 h-4" />
         </button>
         <button
-          className="p-2 bg-[#1e1f1f] rounded-md text-blue-400 flex items-center justify-center cursor-pointer"
+          className="p-2 bg-[#1e1f1f] hover:bg-gray-400 rounded-md text-blue-400 flex items-center justify-center cursor-pointer"
           onClick={handleSaveRoadmap}
         >
           <Database className="w-4 h-4" />
         </button>
         <button
-          className="p-2 bg-[#1e1f1f] rounded-md text-yellow-400 flex items-center justify-center cursor-pointer"
+          className="p-2 bg-[#1e1f1f] hover:bg-gray-400 rounded-md text-yellow-400 flex items-center justify-center cursor-pointer"
           onClick={handleLoadClick}
         >
           <Upload className="w-4 h-4" />
         </button>
         <button
-          className="p-2 bg-[#1e1f1f] rounded-md text-red-400 flex items-center justify-center cursor-pointer"
+          className="p-2 bg-[#1e1f1f] hover:bg-gray-400 rounded-md text-red-400 flex items-center justify-center cursor-pointer"
           onClick={handleClear}
         >
           <Trash2 className="w-4 h-4" />
