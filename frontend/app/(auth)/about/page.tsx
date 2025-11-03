@@ -3,7 +3,7 @@ export default async function AboutPage() {
         <>
             <div className="bg-[#2f3131] flex flex-col items-center justify-items-center h-[calc(100vh-104px)] font-mono text-zinc-200">
                 <div className="container flex flex-col justify-center items-center h-full space-y-5">
-                    <div className="border border-gray-400 rounded-lg p-4">
+                    <div className="rounded-lg p-4">
                         <h1 className="text-3xl font-bold mb-6">About DopeMap</h1>
                         <p className="mb-4 leading-relaxed">
                             <strong>DopeMap</strong> is a Learning Roadmap platform designed to help users plan and define their own skill development paths — clearly, freely, and purposefully.
